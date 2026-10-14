@@ -1,0 +1,15 @@
+# Render Blueprint — one-click backend deployment
+# Dashboard: https://render.com → New → Blueprint → select this repo
+services:
+  - type: web
+    name: ryderesolve-vision5
+    runtime: docker
+    plan: free
+    healthCheckPath: /api/health
+    envVars:
+      - key: AGENT_MODE
+        value: deterministic
+      - key: DEMO_CONTROLS
+        value: "1"
+      - key: RYDE_DB_PATH
+        value: /app/backend/data/demo.sqlite

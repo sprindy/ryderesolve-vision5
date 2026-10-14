@@ -1,0 +1,12 @@
+.git
+.github
+.claude
+archive
+docs
+*.md
+*.db
+*.sqlite3
+.venv
+__pycache__
+node_modules
+.DS_Store
