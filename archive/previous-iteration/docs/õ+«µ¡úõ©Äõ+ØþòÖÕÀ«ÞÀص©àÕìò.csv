@@ -1,0 +1,40 @@
+﻿原审查编号,本版状态,实际修改/保留内容,未全面实现原因与边界,主要实现位置
+SEC-01,Demo 替代实现,创建随机工作区，服务端签名角色凭证；案件绑定 session_id；API 与 ReadTools 检查工作区范围，拒绝 actor 与凭证角色不符,无需外部登录；同一浏览器可切换自己的演示角色。未验证真实 party_id，不是生产 RBAC,`demo_auth.py`、`main.py`、`tools.py`
+SEC-02,部分完善,profile 工具和证据仅保留去姓名/联系方式的 ID 与结构化计数；传输给 Agent 的数据也使用最小化记录,未做全字段 DLP、聊天内容 PII 识别或不同真实参与方的列级隐私策略，Demo 证据与上传样本仍按案件双方可见,`provenance.py:minimize`、`tools.py`
+SEC-03,Demo 替代实现,无签名身份不能操作案件；推进时间与人审必须为本工作区 Admin；记录 reviewer subject；保留可选额外 ADMIN_TOKEN,Admin 是允许切换的演示身份，不是真实员工账号。未实现生产 worker 凭证体系,`demo_auth.py`、`main.py:admin_access`
+DATA-01,部分完善,统一证据元数据：来源、观察/读取时间、hash、验证状态、父引用、visibility；首次读取元数据持久化，重复检索保持稳定；引用校验 hash/可见性/跨案/父链,元数据由受限服务函数构建，未对所有异构原记录强制完整 Pydantic EvidenceRecord；枚举覆盖有限，非真实来源签名,`store.py:evidence`、`provenance.py`
+DATA-02,部分完善,历史和观察时间缺失显式 UNKNOWN；补证派生记录关联上传证据，价格与安全信号保存父证据/版本,尚未将每一种“工具空结果”写成 UNKNOWN EvidenceRecord；等待/路线事实仍由父原记录确定性计算，并非全部独立 derived_signal schema,`provenance.py`、`evidence_intake.py`、`settlement.py`
+POL-01,Demo 替代实现,新建不可变 policy_versions；按事件时间和半开时间区间选择 demo-1/demo-2；固定 applicable_policy_refs，保存选择时间与结果,原政策真实生效日期未知，不能捏造。因此日期明确标为合成，原 source.effective_from 保持未知。未实现任意 booking/service/geography 条件或追溯适用,`knowledge.py:seed/select`、`tools.py:search_policy`
+POL-02,部分完善,对候选版本执行显式 exceptions、priority、specificity；无唯一候选写 POLICY_AMBIGUITY，阻断到期自动关闭,不把原 snapshot 冲突目录自动“推测解决”；实际生产 scope 日期未知仍转人工。没有实现完整法律/政策条件解析器,`knowledge.py:resolve`、`settlement.py:blockers`
+PREC-01,Demo 替代实现,最终、eligible、同工作区、同固定政策版本、同类别硬过滤；固定非 PII 事实特征排序，记录分数构成并返回 Top-K；先例由合格终结产生,使用结构化排序而非 embedding/pgvector。先例只在本工作区积累，避免不同访问者的资料混入；没有全平台历史先例,`knowledge.py:retrieve/feedback`、`tools.py`
+PREC-02,部分完善,确定性检查 CONSISTENT / NO_COMPARABLE_PRECEDENT / UNRESOLVED_DEVIATION；同版本且相同事实结果不同则阻断自动结案，缺可比先例不扣分,结果放在独立 case.precedent_consistency，不是完整 Judge Verdict 契约；未自动证明 JUSTIFIED_DEVIATION 的自然语言解释，无法证明就转人工,`knowledge.py:consistency`、`workflow.py:score`
+PREC-03,已修正（Demo）,最终人审须验证且勾选 feedback_eligible，才生成非 PII 特征、HIGH authority 与终局/政策/退款引用；非法校验和 override 不提升,没有生产级先例撤销、权限审批和审理权威分层；真实案例库未接入,`knowledge.py:feedback`、`main.py:review`
+WF-01,Demo 替代实现,幂等 Mock 通知效果记录；DELIVERED_MOCK 后开启虚拟12小时；模拟通知失败不会开窗，也不能到期关闭,未真实发送短信/email；Mock 送达不是真实回执,`settlement.py:notify_and_open`
+WF-02,已修正,充分性初步决定保留顺序式Driver→Rider复核；不足证据实际等待Driver回应Rider诉求；同意按协议处理，拒绝后Agent评估，不确认转人工,Driver协议不是责任证明，不进先例；弱证据回应超时转人工，不将沉默当同意；不做无限谈判,`workflow.py:route/build_graph`、`settlement.py`
+WF-03,已修正（Demo）,保留充分性决定的material challenge复核；弱证据Driver拒绝后调用两个Advocate和Judge，可信补证重新检索核验，仍无法确认就人工,当前可信上传适配器仅覆盖 SIM-NS-004 的服务器时间证据；其他材料转人工核验,`workflow.py:re_evaluate`、`main.py:challenge`
+WF-04,本轮未修改,两 Advocate 保持串行，但第一轮独立、之后只看上一完整轮输入,Demo 规模小，默认离线；并行会引入不同线程的写审计和状态合并复杂度，不值得在本轮强制扩展。真实模型部署前可加入 fan-out/fan-in,`workflow.py:build_graph/run_role`
+WF-05,部分完善，未实现完整恢复,保留节点快照、版本/活动标记；启动时对未完成工作保守升级人工；关闭案件入口拒绝重放,没有 LangGraph checkpointer pause/resume 和自动节点恢复。Demo 重启后安全降级足够，避免错误重执行副作用,`workflow.py:run/tracked`、`main.py:lifespan`
+WF-06,已调整并记录,早停阈值改为0.85，信心公式与工作流版本记录,仍保留至少第二轮稳定、无新证据/政策/立场以及三轮上限。没有声称是经过生产统计校准的默认阈值,`workflow.py:score`
+WF-07,已修正,双方接受与到期共用唯一原子终结边界；重新读状态、证据hash、裁决语义、完整校验、送达、政策歧义、先例偏离、安全/可靠性佐证和资金输入,单进程 SQLite Demo 的事务保证；不代表真实支付外部 exactly-once,`settlement.py:blockers/close/expire`
+WF-08,已修正,run 对来源状态作 allow-list，CLOSED 不重进；每个 tracked 图节点也检查已关闭终态；重试终结返回已完成结果,没有行政重开旧案件；若需要，应新建关联案件而非修改已结案记录,`workflow.py:run/tracked`、`settlement.py:close`
+FIN-01,Demo 替代实现,结构化历史计数/缺失、中性 UNKNOWN、可解释可靠性分与佐证要求；增加独立历史演示场景；历史不进入 liability_rule,真正历史接口不存在，因此不能用真实历史。评分是固定原型，不是预测用户“好坏”或欺诈模型,`provenance.py:history_signals`、`workflow.py:validate`
+FIN-02,Demo 原型实现,0.30/0.35/0.15/0.10/0.10 五因子、因子原值、贡献、版本与公式；页面展示,因子是小范围确定性近似，政策清晰度主要由本案绑定/歧义守卫支撑；非校准概率，也非完整证据统计模型,`engines.py:confidence`、`admin.js`
+FIN-03,Demo 替代实现,核验 trip/pricing 引用、SGD整数cents、固定退款 rule_id/version，校验规则和政策绑定；固定报价超额/原取消费撤销,未实现真实税费、优惠、surge、分项fare和通用路线赔偿。无授权规则时金额阻断转人工，不能凭空补齐,`settlement.py:calculate`
+FIN-04,已修正（Demo）,保存 input_evidence_ids、policy_refs、规则版本、input_cents、公式、trace、result_id/idempotency_key；页面可查看,可在同一Demo规则下重算；未提供历史所有外部计费规则执行器,`settlement.py:calculate`
+FIN-05,已修正（Demo）,持久化 effect_key UNIQUE；refund effect、final decision、case closed、反馈在同一SQLite事务提交；并发到期只一条,仅 Mock 本地效果，真实支付网关需要其自身幂等键/outbox，不在本轮接入,`store.py:transaction`、`settlement.py:close`
+ARCH-01,本轮未全面修改,保留原 TypedDict payload/dict 和每节点快照，新增业务版本与元数据,全面拆成小型强类型图状态/引用型证据是大重构，演示可维护性收益不足以优先于安全和可观察行为,`workflow.py:GraphState`
+ARCH-02,部分完善,加证据元数据、policy versions、validation_results、human_reviews、effect_records；案件version和终结/退款引用,不是完整领域规范化数据库；仍保留原 JSON 审计/快照，未建立全部外键型业务实体,`store.py:init`
+ARCH-03,本轮未修改,SQLite 存取仍集中在 store.py，未拆正式 Repository interface,用户明确是 Demo，继续保留原栈避免迁移数据库和应用架构。PostgreSQL适配可作为下一阶段,`store.py`
+ARCH-04,Demo 替代实现,关键命令使用 BEGIN IMMEDIATE 串行化原子读改写，结算唯一键保证竞争安全；不仅依赖进程锁,不是通用分布式CAS或多worker部署方案；要求单 uvicorn worker，重启/迁移需额外设计,`store.py:transaction`、`main.py`、`settlement.py`
+ARCH-05,部分完善,LLM 传输最多两次有界尝试；瞬态429/502/503/504/网络/超时重试，其他HTTP失败关闭；记录尝试/耗时,未建立分布式队列、全工具重试/circuit-breaker。SQLite本地读取故障保守升级人工，避免盲目重试,`llm_provider.py:call`
+API-01,部分完善,新增政策版本、本案先例、工作区指标、签名身份；Admin模拟到期与私有settlement.expire分离；Rider-only发起和Driver专属回应接口,没有单独生产worker expire HTTP认证端点，Demo自动扫描直接内部调用；不是完整设计API协议集合,`main.py`
+VAL-01,部分完善,增加hash、visibility、cross-case、父引用、固定政策选择与先例偏离守卫；到期重新检查语义,仍是允许字段/有限业务语义Validator，不是对任意自然语言或所有政策条件的证明器,`provenance.py:verify_refs`、`engines.py`、`knowledge.py`
+OBS-01,部分完善,节点耗时/状态/版本、工具审计、模型尝试与用量、当前工作区状态计数、信心与反馈事件,未接Prometheus/OpenTelemetry、分布式trace、长期聚合或实际准确率标签。不可把静态“configured”当健康证明,`workflow.py:tracked`、`llm_provider.py`、`main.py:metrics`
+EVAL-01,Demo 替代，未做100例,独立版本化8场景期望JSON，不进入业务输入；基准实测状态/责任/耗时/升级结果,用户不要求硬性全部实现。复制同模板扩成100条会伪造覆盖，因此保留8个明确不同场景，真实100例应由专家标注,`scripts/demo_benchmark*`
+EVAL-02,部分完善,保留有效原回归并适配已修正行为；新增身份、竞争/幂等、hash、通知、政策、历史、先例、三轮图和人审引用测试；真实HTTP及浏览器验收,未做完整消融、真实模型多seed、专家一致性、校准等科研评估，单元测试通过不等于生产模型准确率,`backend/tests`、`scripts/http_smoke.py`、`browser_smoke.py`
+RUN-01,部分验证,离线真FastAPI/编译LangGraph、真实HTTP、浏览器、临时预览已验证,没有用户授权/配置的真实模型密钥、真实Ryde数据/支付/通知接口；本次不会替用户注册/登录/付费。预览不是长期生产部署,README与验收记录
+CTRL-01,保留并加强,三角色只读白名单、工具作用域、提示数据不可信、金额职责分离、结构化schema和fail-closed仍保留,未声称消除全部LLM提示注入或安全风险,`agents.py`、`tools.py`、`engines.py`
+CTRL-03,保留并接通,原前端/API、审核队列、案件审计保留；补模拟时钟、引用式人审、证据元数据、版本/先例页；恢复第一版总览与侧栏，加入当前回应角色和可追溯回合历史,页面仍英文以保持原Demo；已对齐第一版红白工作台，但未引入新前端框架,`frontend/*`
+CTRL-02,保留,争议进展、三轮上限、后台扫描、上传去重保持；无需辩论时明确先复核,后台扫描在本地进程存活时工作，预览休眠不保证执行；用一键虚拟时间演示即可,`workflow.py`、`main.py`、`evidence_intake.py`
+SAFE-01,Demo 替代实现,受限关键词安全/高影响信号、parent IDs和detector版本；安全状态自动升级并阻断到期；独立威胁场景,关键词仅用于演示路由，可能误报/漏报。不是生产多语言安全分类器，不自动证明谁有责任,`provenance.py:safety_signals`、`workflow.py`、`settlement.py`
+REVIEW-01,已修正（Demo）,强制本案证据、固定政策版本、理由、reviewer和资格校验；显式override不能提升先例；符合验证的人审可HIGH authority反馈,未实现真实审核人员权限、人工审查SLA、任意补偿金额或跨机构审批,`contracts.py:HumanReview`、`main.py:review`、`knowledge.py`

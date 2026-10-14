@@ -1,0 +1,120 @@
+{
+  "benchmark_version": "demo-party-turns-2",
+  "fixture_sha256": "30355ad1ee3ffc9dd1ac67d743a6874430e535a7cab25e90248a7675ac05c007",
+  "scope": "Synthetic deterministic regression; not 100-case production benchmark or LLM accuracy",
+  "count": 8,
+  "passed": 8,
+  "failed": 0,
+  "human_review_count": 2,
+  "raw_latency_ms": [
+    749,
+    759,
+    691,
+    815,
+    667,
+    587,
+    712,
+    710
+  ],
+  "results": [
+    {
+      "trip_id": "SIM-NS-001",
+      "passed": true,
+      "status": "challenge_window",
+      "liability": "charge_upheld",
+      "latency_ms": 749,
+      "validation_passed": true,
+      "policy_refs": [
+        "HC-RIDER-NOSHOW@demo-2"
+      ],
+      "safety_blocked": false
+    },
+    {
+      "trip_id": "SIM-LR-001",
+      "passed": true,
+      "status": "challenge_window",
+      "liability": "charge_upheld",
+      "latency_ms": 759,
+      "validation_passed": true,
+      "policy_refs": [
+        "HC-ROUTE-GPS@demo-2",
+        "HC-ROUTE-FIXED@demo-2"
+      ],
+      "safety_blocked": false
+    },
+    {
+      "trip_id": "SIM-NS-002",
+      "passed": true,
+      "status": "human_review",
+      "liability": "undetermined",
+      "latency_ms": 691,
+      "validation_passed": true,
+      "policy_refs": [
+        "HC-RIDER-NOSHOW@demo-2"
+      ],
+      "safety_blocked": false
+    },
+    {
+      "trip_id": "SIM-LR-002",
+      "passed": true,
+      "status": "awaiting_response",
+      "liability": "undetermined",
+      "latency_ms": 815,
+      "validation_passed": true,
+      "policy_refs": [
+        "HC-ROUTE-GPS@demo-2",
+        "HC-ROUTE-FIXED@demo-2"
+      ],
+      "safety_blocked": false
+    },
+    {
+      "trip_id": "SIM-NS-003",
+      "passed": true,
+      "status": "challenge_window",
+      "liability": "refund",
+      "latency_ms": 667,
+      "validation_passed": true,
+      "policy_refs": [
+        "HC-RIDER-NOSHOW@demo-2"
+      ],
+      "safety_blocked": false
+    },
+    {
+      "trip_id": "SIM-NS-004",
+      "passed": true,
+      "status": "awaiting_response",
+      "liability": "refund",
+      "latency_ms": 587,
+      "validation_passed": true,
+      "policy_refs": [
+        "HC-RIDER-NOSHOW@demo-2"
+      ],
+      "safety_blocked": false
+    },
+    {
+      "trip_id": "SIM-SAFE-001",
+      "passed": true,
+      "status": "human_review",
+      "liability": "charge_upheld",
+      "latency_ms": 712,
+      "validation_passed": true,
+      "policy_refs": [
+        "HC-RIDER-NOSHOW@demo-2"
+      ],
+      "safety_blocked": true
+    },
+    {
+      "trip_id": "SIM-HIST-001",
+      "passed": true,
+      "status": "challenge_window",
+      "liability": "charge_upheld",
+      "latency_ms": 710,
+      "validation_passed": true,
+      "policy_refs": [
+        "HC-RIDER-NOSHOW@demo-2"
+      ],
+      "safety_blocked": false
+    }
+  ],
+  "limitations": "Eight deterministic synthetic scenarios; no ablation, calibrated precision/recall, real LLM or 100 independent cases."
+}

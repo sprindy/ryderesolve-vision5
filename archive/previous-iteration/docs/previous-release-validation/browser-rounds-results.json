@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "checks": [
+    "Admin has first-edition Overview and no submit action",
+    "Rider-only intake and Rider waits for Driver",
+    "Driver consent resolves Rider request, not Judge-proof masquerade",
+    "Driver reason goes to Agents and unresolved assessment goes to human",
+    "Verified Driver document evaluated by both Advocates and Judge",
+    "Overview metrics, case navigation and response history are functional",
+    "Human reviewer remains functional with cited evidence and policy",
+    "Mobile overview and Driver response form"
+  ],
+  "page_errors": [],
+  "overflow_admin": false,
+  "overflow_driver": false,
+  "base": "http://127.0.0.1:8006",
+  "mode": "deterministic, no real LLM or payment"
+}

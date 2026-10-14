@@ -1,0 +1,9 @@
+{
+  "clean_zip_extraction": true,
+  "http_smoke_passed": true,
+  "extracted_directory": "/home/ubuntu/ryde-rounds-package-vb9d90yf/ryde-vision5-demo-rounds",
+  "mode": "deterministic",
+  "runtime_database_bundled": false,
+  "check_count": 11,
+  "fresh_database_case_count": 0
+}

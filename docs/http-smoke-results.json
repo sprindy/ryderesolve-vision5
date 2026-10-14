@@ -1,0 +1,79 @@
+{
+  "passed": true,
+  "mode": "deterministic",
+  "checks": {
+    "health": {
+      "ok": true,
+      "version": "vision5-challenge-3",
+      "workflow": "compiled LangGraph StateGraph",
+      "langgraph_version": "1.2.14",
+      "mode": "deterministic",
+      "database": "SQLite demo repository",
+      "official_sample": "DISP-002"
+    },
+    "virtual_clock": "PASS",
+    "SIM-NS-001": {
+      "status": "challenge_window",
+      "mode": "DECISION_REVIEW",
+      "affected": "rider",
+      "liability": "charge_upheld"
+    },
+    "SIM-LR-001": {
+      "status": "challenge_window",
+      "mode": "DECISION_REVIEW",
+      "affected": "rider",
+      "liability": "charge_upheld"
+    },
+    "SIM-NS-002": {
+      "status": "human_review",
+      "mode": null,
+      "affected": null,
+      "liability": "undetermined"
+    },
+    "SIM-LR-002": {
+      "status": "human_review",
+      "mode": null,
+      "affected": null,
+      "liability": "undetermined"
+    },
+    "SIM-NS-003": {
+      "status": "challenge_window",
+      "mode": "DECISION_REVIEW",
+      "affected": "driver",
+      "liability": "refund"
+    },
+    "SIM-NS-004": {
+      "status": "challenge_window",
+      "mode": "EVIDENCE_REQUIRED",
+      "affected": "driver",
+      "liability": "refund"
+    },
+    "SIM-NS-004_evidence_challenge": {
+      "outcome": "charge_upheld",
+      "debate_rounds": 3
+    },
+    "SIM-NS-005": {
+      "status": "challenge_window",
+      "mode": "EVIDENCE_REQUIRED",
+      "affected": "rider",
+      "liability": "charge_upheld"
+    },
+    "SIM-NS-005_evidence_challenge": {
+      "outcome": "refund",
+      "debate_rounds": 1
+    },
+    "SIM-SAFE-001": {
+      "status": "human_review",
+      "mode": null,
+      "affected": null,
+      "liability": "charge_upheld"
+    },
+    "SIM-HIST-001": {
+      "status": "challenge_window",
+      "mode": "DECISION_REVIEW",
+      "affected": "rider",
+      "liability": "charge_upheld"
+    }
+  },
+  "server_log": "INFO:     Started server process [23452]\nINFO:     Waiting for application startup.\nINFO:     Application startup complete.\nINFO:     Uvicorn running on http://127.0.0.1:55442 (Press CTRL+C to quit)\nINFO:     127.0.0.1:55443 - \"GET /api/health HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55450 - \"POST /api/demo/session HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55451 - \"GET / HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55452 - \"GET /rider HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55453 - \"GET /driver HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55454 - \"GET /admin HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55455 - \"GET /admin.js HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55456 - \"GET /common.js HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55457 - \"POST /api/demo/official-reset HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55458 - \"POST /api/cases/RYD-1045/simulate-timeout HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55459 - \"POST /api/cases HTTP/1.1\" 202 Accepted\nINFO:     127.0.0.1:55460 - \"GET /api/cases/RYD-1046 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55462 - \"GET /api/cases/RYD-1046 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55463 - \"GET /api/cases/RYD-1046 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55464 - \"GET /api/cases/RYD-1046 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55465 - \"GET /api/cases/RYD-1046 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55467 - \"GET /api/cases/RYD-1046 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55468 - \"GET /api/cases/RYD-1046 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55469 - \"POST /api/cases HTTP/1.1\" 202 Accepted\nINFO:     127.0.0.1:55470 - \"GET /api/cases/RYD-1047 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55471 - \"GET /api/cases/RYD-1047 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55472 - \"GET /api/cases/RYD-1047 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55473 - \"GET /api/cases/RYD-1047 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55475 - \"POST /api/cases HTTP/1.1\" 202 Accepted\nINFO:     127.0.0.1:55476 - \"GET /api/cases/RYD-1048 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55477 - \"GET /api/cases/RYD-1048 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55478 - \"GET /api/cases/RYD-1048 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55479 - \"POST /api/cases HTTP/1.1\" 202 Accepted\nINFO:     127.0.0.1:55480 - \"GET /api/cases/RYD-1049 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55481 - \"GET /api/cases/RYD-1049 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55482 - \"GET /api/cases/RYD-1049 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55483 - \"GET /api/cases/RYD-1049 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55484 - \"POST /api/cases HTTP/1.1\" 202 Accepted\nINFO:     127.0.0.1:55485 - \"GET /api/cases/RYD-1050 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55486 - \"GET /api/cases/RYD-1050 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55487 - \"GET /api/cases/RYD-1050 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55488 - \"GET /api/cases/RYD-1050 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55489 - \"POST /api/cases HTTP/1.1\" 202 Accepted\nINFO:     127.0.0.1:55490 - \"GET /api/cases/RYD-1051 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55491 - \"GET /api/cases/RYD-1051 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55492 - \"GET /api/cases/RYD-1051 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55493 - \"GET /api/cases/RYD-1051 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55494 - \"POST /api/cases/RYD-1051/evidence HTTP/1.1\" 201 Created\nINFO:     127.0.0.1:55495 - \"POST /api/cases/RYD-1051/challenge HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55496 - \"GET /api/cases/RYD-1051 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55497 - \"GET /api/cases/RYD-1051 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55498 - \"GET /api/cases/RYD-1051 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55499 - \"GET /api/cases/RYD-1051 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55500 - \"GET /api/cases/RYD-1051 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55501 - \"GET /api/cases/RYD-1051 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55502 - \"GET /api/cases/RYD-1051 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55503 - \"GET /api/cases/RYD-1051 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55504 - \"GET /api/cases/RYD-1051 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55505 - \"GET /api/cases/RYD-1051 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55506 - \"GET /api/cases/RYD-1051 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55507 - \"GET /api/cases/RYD-1051 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55508 - \"GET /api/cases/RYD-1051 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55509 - \"POST /api/cases HTTP/1.1\" 202 Accepted\nINFO:     127.0.0.1:55510 - \"GET /api/cases/RYD-1052 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55511 - \"GET /api/cases/RYD-1052 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55512 - \"GET /api/cases/RYD-1052 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55513 - \"GET /api/cases/RYD-1052 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55514 - \"POST /api/cases/RYD-1052/evidence HTTP/1.1\" 201 Created\nINFO:     127.0.0.1:55515 - \"POST /api/cases/RYD-1052/challenge HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55516 - \"GET /api/cases/RYD-1052 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55517 - \"GET /api/cases/RYD-1052 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55518 - \"GET /api/cases/RYD-1052 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55519 - \"GET /api/cases/RYD-1052 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55520 - \"GET /api/cases/RYD-1052 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55521 - \"POST /api/cases HTTP/1.1\" 202 Accepted\nINFO:     127.0.0.1:55522 - \"GET /api/cases/RYD-1053 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55523 - \"GET /api/cases/RYD-1053 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55524 - \"GET /api/cases/RYD-1053 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55525 - \"POST /api/cases HTTP/1.1\" 202 Accepted\nINFO:     127.0.0.1:55526 - \"GET /api/cases/RYD-1054 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55527 - \"GET /api/cases/RYD-1054 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55528 - \"GET /api/cases/RYD-1054 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55529 - \"GET /api/cases/RYD-1054 HTTP/1.1\" 200 OK\nINFO:     127.0.0.1:55530 - \"GET /api/demo/metrics HTTP/1.1\" 200 OK\n"
+}

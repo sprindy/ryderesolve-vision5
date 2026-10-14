@@ -1,0 +1,601 @@
+{
+  "sources": [
+    {
+      "source_id": "HC-FARE",
+      "title": "Understanding the Fare Structure",
+      "url": "https://help.rydesharing.com/hc/en-us/articles/46946509938073-Understanding-the-Fare-Structure",
+      "audience": "rider",
+      "source_kind": "official_help_center",
+      "retrieved_on": "2026-10-12",
+      "effective_from": null,
+      "extraction_method": "Paraphrased structured clauses from web-accessible article text; images not extracted",
+      "source_file": null,
+      "sha256": null
+    },
+    {
+      "source_id": "HC-ROUTE",
+      "title": "Am I required to follow the suggested route by the rider?",
+      "url": "https://help.rydesharing.com/hc/en-us/articles/4412122016153-Am-I-required-to-follow-the-suggested-route-by-the-rider",
+      "audience": "driver",
+      "source_kind": "official_help_center",
+      "retrieved_on": "2026-10-12",
+      "effective_from": null,
+      "extraction_method": "Paraphrased structured clauses from web-accessible article text; images not extracted",
+      "source_file": null,
+      "sha256": null
+    },
+    {
+      "source_id": "HC-RIDER",
+      "title": "Cancellation and Waiting Fee",
+      "url": "https://help.rydesharing.com/hc/en-us/articles/23534478435353-Cancellation-and-Waiting-Fee",
+      "audience": "rider",
+      "source_kind": "official_help_center",
+      "retrieved_on": "2026-10-12",
+      "effective_from": null,
+      "extraction_method": "Paraphrased structured clauses from web-accessible article text; images not extracted",
+      "source_file": null,
+      "sha256": null
+    },
+    {
+      "source_id": "HC-DRIVER",
+      "title": "Cancellation and Waiting Time Policy",
+      "url": "https://help.rydesharing.com/hc/en-us/articles/33362932998937-Cancellation-and-Waiting-Time-Policy",
+      "audience": "driver",
+      "source_kind": "official_help_center",
+      "retrieved_on": "2026-10-12",
+      "effective_from": null,
+      "extraction_method": "Paraphrased structured clauses from web-accessible article text; images not extracted",
+      "source_file": null,
+      "sha256": null
+    },
+    {
+      "source_id": "HC-CANCEL-HOW",
+      "title": "How Does the Cancellation Fee Work?",
+      "url": "https://help.rydesharing.com/hc/en-us/articles/4408070838297-How-Does-the-Cancellation-Fee-Work",
+      "audience": "driver",
+      "source_kind": "official_help_center",
+      "retrieved_on": "2026-10-12",
+      "effective_from": null,
+      "extraction_method": "Paraphrased structured clauses from web-accessible article text; images not extracted",
+      "source_file": null,
+      "sha256": null
+    },
+    {
+      "source_id": "HC-CONTACT",
+      "title": "I am unable to contact my rider. The rider did not turn up. What should I do?",
+      "url": "https://help.rydesharing.com/hc/en-us/articles/115001438754-I-am-unable-to-contact-my-rider-The-rider-did-not-turn-up-What-should-I-do",
+      "audience": "driver",
+      "source_kind": "official_help_center",
+      "retrieved_on": "2026-10-12",
+      "effective_from": null,
+      "extraction_method": "Paraphrased structured clauses from web-accessible article text; images not extracted",
+      "source_file": null,
+      "sha256": null
+    },
+    {
+      "source_id": "HC-APPEAL",
+      "title": "I wish to make an appeal",
+      "url": "https://help.rydesharing.com/hc/en-us/articles/23575142762393-I-wish-to-make-an-appeal",
+      "audience": "driver",
+      "source_kind": "official_help_center",
+      "retrieved_on": "2026-10-12",
+      "effective_from": null,
+      "extraction_method": "Paraphrased structured clauses from web-accessible article text; images not extracted",
+      "source_file": null,
+      "sha256": null
+    },
+    {
+      "source_id": "HC-WAIT-WAIVER",
+      "title": "Waiting Fee Waiver Request",
+      "url": "https://help.rydesharing.com/hc/en-us/articles/27085468660505-Waiting-Fee-Waiver-Request",
+      "audience": "rider",
+      "source_kind": "official_help_center",
+      "retrieved_on": "2026-10-12",
+      "effective_from": null,
+      "extraction_method": "Paraphrased structured clauses from web-accessible article text; images not extracted",
+      "source_file": null,
+      "sha256": null
+    },
+    {
+      "source_id": "HC-CANCEL-WAIVER",
+      "title": "Cancellation Fee Waiver Request",
+      "url": "https://help.rydesharing.com/hc/en-us/articles/18229758389017-Cancellation-Fee-Waiver-Request",
+      "audience": "rider",
+      "source_kind": "official_help_center",
+      "retrieved_on": "2026-10-12",
+      "effective_from": null,
+      "extraction_method": "Paraphrased structured clauses from web-accessible article text; images not extracted",
+      "source_file": null,
+      "sha256": null
+    },
+    {
+      "source_id": "HC-SCOPE",
+      "title": "Does the Cancellation Policy apply to all Ryde services?",
+      "url": "https://help.rydesharing.com/hc/en-us/articles/4407761313305-Does-the-Cancellation-Policy-apply-to-all-Ryde-services",
+      "audience": "rider",
+      "source_kind": "official_help_center",
+      "retrieved_on": "2026-10-12",
+      "effective_from": null,
+      "extraction_method": "Paraphrased structured clauses from web-accessible article text; images not extracted",
+      "source_file": null,
+      "sha256": null
+    },
+    {
+      "source_id": "SAMPLE-DISP-002",
+      "title": "RydeResolve Sample Dataset — DISP-002 No-Show Charge Dispute (SG)",
+      "url": null,
+      "audience": "both",
+      "source_kind": "user_provided_official_sample",
+      "retrieved_on": "2026-10-12",
+      "effective_from": null,
+      "extraction_method": "Exact cancellation_policy object from supplied JSON",
+      "source_file": "RydeResolve Sample Dataset — DISP-002 No-Show Charge Dispute (SG).md",
+      "sha256": "a11fb5b04672c15b56be01a637726945be192e26e276e3367fe7dc7d80685167"
+    }
+  ],
+  "clauses": [
+    {
+      "policy_id": "HC-FARE-DISTANCE",
+      "source_id": "HC-FARE",
+      "topic": "long_route",
+      "statement": "Core trip pricing depends on distance and duration.",
+      "parameters": {
+        "pricing_basis": [
+          "distance",
+          "duration"
+        ]
+      }
+    },
+    {
+      "policy_id": "HC-FARE-OTHER",
+      "source_id": "HC-FARE",
+      "topic": "fare",
+      "statement": "Service/platform fees and applicable taxes or charges are additional fare components.",
+      "parameters": {}
+    },
+    {
+      "policy_id": "HC-ROUTE-FIXED",
+      "source_id": "HC-ROUTE",
+      "topic": "long_route",
+      "statement": "This article describes the fare as fixed by pickup and destination.",
+      "parameters": {
+        "pricing_basis": "fixed_pickup_dropoff"
+      }
+    },
+    {
+      "policy_id": "HC-ROUTE-GPS",
+      "source_id": "HC-ROUTE",
+      "topic": "long_route",
+      "statement": "Drivers may choose the quickest or most efficient GPS route; a rider-suggested route is optional.",
+      "parameters": {
+        "route_choice": "fastest_or_most_efficient_gps",
+        "rider_route_mandatory": false
+      }
+    },
+    {
+      "policy_id": "HC-RIDER-GRACE",
+      "source_id": "HC-RIDER",
+      "topic": "cancellation",
+      "statement": "On-demand cancellations within three minutes of matching incur no charge.",
+      "parameters": {
+        "booking_type": "on_demand",
+        "matching_grace_min": 3
+      }
+    },
+    {
+      "policy_id": "HC-RIDER-CANCEL",
+      "source_id": "HC-RIDER",
+      "topic": "cancellation",
+      "statement": "For on-demand bookings, rider cancellation after the matching grace period incurs S$6.61.",
+      "parameters": {
+        "booking_type": "on_demand",
+        "matching_elapsed_operator": ">",
+        "matching_elapsed_min": 3,
+        "amount_sgd": 6.61,
+        "amount_role": "rider_charge",
+        "fee_label": "cancellation"
+      }
+    },
+    {
+      "policy_id": "HC-RIDER-NOSHOW",
+      "source_id": "HC-RIDER",
+      "topic": "no_show",
+      "statement": "After pressing arrival and waiting over three minutes, driver cancellation for non-arrival incurs a S$6.61 rider cancellation charge; no trip completion.",
+      "parameters": {
+        "booking_type": "on_demand",
+        "arrival_action_required": true,
+        "wait_operator": ">",
+        "wait_min": 3,
+        "amount_sgd": 6.61,
+        "amount_role": "rider_charge",
+        "fee_label": "cancellation",
+        "trip_completed": false
+      }
+    },
+    {
+      "policy_id": "HC-RIDER-WAIT",
+      "source_id": "HC-RIDER",
+      "topic": "waiting_fee",
+      "statement": "When the rider boards after over three minutes and the journey completes, a S$5 waiting charge may apply.",
+      "parameters": {
+        "booking_type": "on_demand",
+        "arrival_action_required": true,
+        "wait_operator": ">",
+        "wait_min": 3,
+        "amount_sgd": 5,
+        "amount_role": "rider_charge",
+        "fee_label": "waiting",
+        "trip_completed": true
+      }
+    },
+    {
+      "policy_id": "HC-RIDER-ADVGRACE",
+      "source_id": "HC-RIDER",
+      "topic": "cancellation",
+      "statement": "Advanced bookings cancelled more than fifteen minutes before pickup are free; late acceptance carries a three-minute grace period.",
+      "parameters": {
+        "booking_type": "advanced",
+        "free_cancellation_before_pickup_operator": ">",
+        "free_cancellation_before_pickup_min": 15,
+        "late_acceptance_grace_min": 3
+      }
+    },
+    {
+      "policy_id": "HC-RIDER-ADVCANCEL",
+      "source_id": "HC-RIDER",
+      "topic": "cancellation",
+      "statement": "Advanced rider cancellations outside the permitted window incur S$6.61.",
+      "parameters": {
+        "booking_type": "advanced",
+        "amount_sgd": 6.61,
+        "amount_role": "rider_charge",
+        "fee_label": "cancellation"
+      }
+    },
+    {
+      "policy_id": "HC-RIDER-ADVNO",
+      "source_id": "HC-RIDER",
+      "topic": "no_show",
+      "statement": "Advanced driver cancellation after over three minutes of non-arrival incurs S$6.61, without completion.",
+      "parameters": {
+        "booking_type": "advanced",
+        "wait_operator": ">",
+        "wait_min": 3,
+        "amount_sgd": 6.61,
+        "amount_role": "rider_charge",
+        "fee_label": "cancellation",
+        "trip_completed": false
+      }
+    },
+    {
+      "policy_id": "HC-RIDER-ADVWAIT",
+      "source_id": "HC-RIDER",
+      "topic": "waiting_fee",
+      "statement": "An advanced trip completed after boarding later than three minutes may incur S$5 waiting charges.",
+      "parameters": {
+        "booking_type": "advanced",
+        "wait_operator": ">",
+        "wait_min": 3,
+        "amount_sgd": 5,
+        "amount_role": "rider_charge",
+        "fee_label": "waiting",
+        "trip_completed": true
+      }
+    },
+    {
+      "policy_id": "HC-DRIVER-GRACE",
+      "source_id": "HC-DRIVER",
+      "topic": "cancellation",
+      "statement": "On-demand matching has a three-minute cancellation grace period.",
+      "parameters": {
+        "booking_type": "on_demand",
+        "matching_grace_min": 3
+      }
+    },
+    {
+      "policy_id": "HC-DRIVER-CANCEL",
+      "source_id": "HC-DRIVER",
+      "topic": "cancellation",
+      "statement": "On-demand rider cancellation after three minutes yields S$4.50 to the driver.",
+      "parameters": {
+        "booking_type": "on_demand",
+        "matching_elapsed_operator": ">",
+        "matching_elapsed_min": 3,
+        "amount_sgd": 4.5,
+        "amount_role": "driver_receipt",
+        "fee_label": "cancellation"
+      }
+    },
+    {
+      "policy_id": "HC-DRIVER-NOSHOW",
+      "source_id": "HC-DRIVER",
+      "topic": "no_show",
+      "statement": "This article labels S$4.50 following arrival, over three minutes waiting and no-show cancellation as a waiting fee.",
+      "parameters": {
+        "booking_type": "on_demand",
+        "arrival_action_required": true,
+        "wait_operator": ">",
+        "wait_min": 3,
+        "amount_sgd": 4.5,
+        "amount_role": "driver_receipt",
+        "fee_label": "waiting",
+        "trip_completed": false
+      }
+    },
+    {
+      "policy_id": "HC-DRIVER-WAIT",
+      "source_id": "HC-DRIVER",
+      "topic": "waiting_fee",
+      "statement": "Arrival, over three minutes waiting, boarding and completion allow S$4.50 waiting compensation.",
+      "parameters": {
+        "booking_type": "on_demand",
+        "wait_operator": ">",
+        "wait_min": 3,
+        "amount_sgd": 4.5,
+        "amount_role": "driver_receipt",
+        "fee_label": "waiting",
+        "trip_completed": true
+      }
+    },
+    {
+      "policy_id": "HC-DRIVER-ADVGRACE",
+      "source_id": "HC-DRIVER",
+      "topic": "cancellation",
+      "statement": "Advanced cancellations over fifteen minutes before pickup are free; late matching permits three minutes grace.",
+      "parameters": {
+        "booking_type": "advanced",
+        "free_cancellation_before_pickup_min": 15,
+        "late_acceptance_grace_min": 3
+      }
+    },
+    {
+      "policy_id": "HC-DRIVER-ADVCANCEL",
+      "source_id": "HC-DRIVER",
+      "topic": "cancellation",
+      "statement": "Advanced rider cancellation outside the permitted window yields S$4.50.",
+      "parameters": {
+        "booking_type": "advanced",
+        "amount_sgd": 4.5,
+        "amount_role": "driver_receipt",
+        "fee_label": "cancellation"
+      }
+    },
+    {
+      "policy_id": "HC-DRIVER-ADVNO",
+      "source_id": "HC-DRIVER",
+      "topic": "no_show",
+      "statement": "For advanced no-show cancellation after over three minutes waiting, this article labels S$4.50 as waiting compensation.",
+      "parameters": {
+        "booking_type": "advanced",
+        "wait_operator": ">",
+        "wait_min": 3,
+        "amount_sgd": 4.5,
+        "amount_role": "driver_receipt",
+        "fee_label": "waiting",
+        "trip_completed": false
+      }
+    },
+    {
+      "policy_id": "HC-DRIVER-ADVWAIT",
+      "source_id": "HC-DRIVER",
+      "topic": "waiting_fee",
+      "statement": "Advanced journeys completed after over three minutes waiting permit S$4.50 waiting compensation.",
+      "parameters": {
+        "booking_type": "advanced",
+        "wait_operator": ">",
+        "wait_min": 3,
+        "amount_sgd": 4.5,
+        "amount_role": "driver_receipt",
+        "fee_label": "waiting",
+        "trip_completed": true
+      }
+    },
+    {
+      "policy_id": "HC-DRIVER-SCOPE",
+      "source_id": "HC-DRIVER",
+      "topic": "service_scope",
+      "statement": "The driver policy states that it covers all service types.",
+      "parameters": {
+        "service_scope": "all",
+        "exceptions": []
+      }
+    },
+    {
+      "policy_id": "HC-CANCEL-HOW-NOSHOW",
+      "source_id": "HC-CANCEL-HOW",
+      "topic": "no_show",
+      "statement": "Driver cancellation after over three minutes waiting automatically yields S$4.50, labelled cancellation fee here.",
+      "parameters": {
+        "wait_operator": ">",
+        "wait_min": 3,
+        "amount_sgd": 4.5,
+        "amount_role": "driver_receipt",
+        "fee_label": "cancellation",
+        "trip_completed": false
+      }
+    },
+    {
+      "policy_id": "HC-CONTACT-TRY",
+      "source_id": "HC-CONTACT",
+      "topic": "no_show",
+      "statement": "Attempt in-app messaging or a call before cancelling if the rider remains unreachable.",
+      "parameters": {
+        "contact_channels": [
+          "in_app_chat",
+          "call"
+        ]
+      }
+    },
+    {
+      "policy_id": "HC-APPEAL-ELIGIBLE",
+      "source_id": "HC-APPEAL",
+      "topic": "no_show",
+      "statement": "Fee eligibility requires reaching pickup and the customer remaining absent within three minutes.",
+      "parameters": {
+        "wait_min": 3,
+        "wording_boundary": "within_three_minutes",
+        "requires_arrival": true
+      }
+    },
+    {
+      "policy_id": "HC-APPEAL-AUTO",
+      "source_id": "HC-APPEAL",
+      "topic": "cancellation",
+      "statement": "Eligible drivers receive automatic credit when a customer cancels.",
+      "parameters": {}
+    },
+    {
+      "policy_id": "HC-WAIT-WAIVER-REQUEST",
+      "source_id": "HC-WAIT-WAIVER",
+      "topic": "waiting_fee",
+      "statement": "Request review through in-app RydeHELP within thirty days; eligibility is reviewed.",
+      "parameters": {
+        "request_window_days": 30,
+        "channel": "RydeHELP",
+        "automatic_approval": false
+      }
+    },
+    {
+      "policy_id": "HC-WAIT-WAIVER-VOUCHER",
+      "source_id": "HC-WAIT-WAIVER",
+      "topic": "waiting_fee",
+      "statement": "Eligible waiting-charge refunds are S$5 wallet vouchers, with no cash exchange or expiry extension.",
+      "parameters": {
+        "amount_sgd": 5,
+        "remedy": "voucher",
+        "cash_exchange": false,
+        "expiry_extension": false
+      }
+    },
+    {
+      "policy_id": "HC-CANCEL-WAIVER-REQUEST",
+      "source_id": "HC-CANCEL-WAIVER",
+      "topic": "cancellation",
+      "statement": "Request eligibility review through RydeHELP within thirty days of the trip.",
+      "parameters": {
+        "request_window_days": 30,
+        "channel": "RydeHELP",
+        "automatic_approval": false
+      }
+    },
+    {
+      "policy_id": "HC-CANCEL-WAIVER-VOUCHER",
+      "source_id": "HC-CANCEL-WAIVER",
+      "topic": "cancellation",
+      "statement": "Eligible cancellation-charge refunds are S$6.61 wallet vouchers; cash exchange and expiry extensions are excluded.",
+      "parameters": {
+        "amount_sgd": 6.61,
+        "remedy": "voucher",
+        "cash_exchange": false,
+        "expiry_extension": false
+      }
+    },
+    {
+      "policy_id": "HC-CANCEL-WAIVER-DATE",
+      "source_id": "HC-CANCEL-WAIVER",
+      "topic": "cancellation",
+      "statement": "This article links its increased amount to platform fee changes effective 17 February 2026.",
+      "parameters": {
+        "platform_fee_change_effective": "2026-02-17",
+        "not_global_policy_effective_date": true
+      }
+    },
+    {
+      "policy_id": "HC-SCOPE-ALL",
+      "source_id": "HC-SCOPE",
+      "topic": "service_scope",
+      "statement": "Cancellation policy applies at service level, includes carpool drivers and excludes RydeTAXI.",
+      "parameters": {
+        "service_scope": "all_except",
+        "exceptions": [
+          "RydeTAXI"
+        ]
+      }
+    },
+    {
+      "policy_id": "SAMPLE-DISP-002-FREE",
+      "source_id": "SAMPLE-DISP-002",
+      "topic": "waiting_fee",
+      "statement": "Official sample specifies five minutes free waiting.",
+      "parameters": {
+        "free_wait_time_min": 5
+      }
+    },
+    {
+      "policy_id": "SAMPLE-DISP-002-NO",
+      "source_id": "SAMPLE-DISP-002",
+      "topic": "no_show",
+      "statement": "Official sample specifies an eight-minute no-show threshold.",
+      "parameters": {
+        "wait_operator": ">=",
+        "wait_min": 8
+      }
+    },
+    {
+      "policy_id": "SAMPLE-DISP-002-FEE",
+      "source_id": "SAMPLE-DISP-002",
+      "topic": "cancellation",
+      "statement": "Official sample charges S$5 after waiting, allocated to driver compensation.",
+      "parameters": {
+        "amount_sgd": 5.0,
+        "amount_role": "rider_charge",
+        "fee_label": "cancellation",
+        "fee_goes_to": "driver_compensation"
+      }
+    }
+  ],
+  "conflicts": [
+    {
+      "conflict_id": "C001",
+      "conflict_type": "version_threshold",
+      "policy_ids": [
+        "SAMPLE-DISP-002-NO",
+        "HC-RIDER-NOSHOW",
+        "HC-RIDER-ADVNO"
+      ],
+      "description": "Sample uses eight minutes; Help Center uses over three minutes. Historical applicability is unresolved.",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "conflict_id": "C002",
+      "conflict_type": "version_amount",
+      "policy_ids": [
+        "SAMPLE-DISP-002-FEE",
+        "HC-RIDER-NOSHOW",
+        "HC-RIDER-ADVNO"
+      ],
+      "description": "Sample rider charge is S$5; website rider charge is S$6.61. Keep separate versions.",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "conflict_id": "C003",
+      "conflict_type": "fee_label",
+      "policy_ids": [
+        "HC-DRIVER-NOSHOW",
+        "HC-CANCEL-HOW-NOSHOW"
+      ],
+      "description": "Driver articles describe no-show compensation with different fee labels: waiting versus cancellation.",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "conflict_id": "C004",
+      "conflict_type": "service_scope",
+      "policy_ids": [
+        "HC-DRIVER-SCOPE",
+        "HC-SCOPE-ALL"
+      ],
+      "description": "Driver article states all services; rider article excludes RydeTAXI.",
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "conflict_id": "C005",
+      "conflict_type": "pricing_context",
+      "policy_ids": [
+        "HC-FARE-DISTANCE",
+        "HC-ROUTE-FIXED"
+      ],
+      "description": "Distance/duration fare description and fixed pickup/destination pricing require service context; no automatic reconciliation.",
+      "status": "REVIEW_REQUIRED"
+    }
+  ]
+}

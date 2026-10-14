@@ -1,0 +1,8 @@
+{
+  "passed": true,
+  "tests_run": 6,
+  "failures": 0,
+  "errors": 0,
+  "kind": "domain_node_component_and_transport_tests",
+  "note": "Real DB/agents/tools/engines and workflow node functions. HTTPException replaced solely for domain imports; no FastAPI server, TestClient or compiled LangGraph was tested. Provider transport uses local fixtures, not a live model."
+}

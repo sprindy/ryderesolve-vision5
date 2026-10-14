@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "check_count": 6,
+  "checks": [
+    "Invalid legacy token is validated and replaced once under concurrent startup",
+    "Valid workspace and selected case are preserved",
+    "Mid-session 401 renews workspace but NEVER replays a mutation",
+    "List GET retries at most once after 401",
+    "Role-denial 403 does not refresh credentials or bypass authorization",
+    "Transient validation outage preserves saved workspace"
+  ]
+}

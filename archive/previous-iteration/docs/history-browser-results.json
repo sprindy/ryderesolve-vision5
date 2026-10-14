@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "kind": "headless_edge_fixture_regression",
+  "fixture_source": "actual_db_tools_agents_and_node_components_not_compiled_graph",
+  "checks": [
+    "Stable disclosure keys ignore changing record counts",
+    "Both official nested profiles displayed without fabricated missing counts",
+    "Disclosure remains open across live polling and changed list timestamps",
+    "Manual close remains closed across polls",
+    "Nested Evidence Explorer disclosures retain their state",
+    "Disclosure state is isolated by workspace/role/case/tab",
+    "Policy subview is not replaced by polling of old case tab",
+    "Measurements subview remains visible across polls",
+    "Driver response history retains expanded state",
+    "Driver has both-party history view",
+    "Rider has both-party history view",
+    "Mobile history has no horizontal overflow"
+  ],
+  "case_reads": 42,
+  "note": "Real browser uses intercepted API responses produced by actual DB/agent/node components. This does not validate FastAPI, compiled LangGraph, or a real LLM provider."
+}

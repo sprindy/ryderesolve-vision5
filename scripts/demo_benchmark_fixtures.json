@@ -1,0 +1,19 @@
+{
+  "benchmark_version": "affected-party-challenge-3",
+  "scope": "Synthetic deterministic regression of the routing contract; not a production benchmark or LLM accuracy",
+  "fixtures": [
+    {"trip_id": "SIM-NS-001", "expected_status": "challenge_window", "expected_liability": "charge_upheld", "expected_mode": "DECISION_REVIEW", "expected_affected": "rider"},
+    {"trip_id": "SIM-LR-001", "expected_status": "challenge_window", "expected_liability": "charge_upheld", "expected_mode": "DECISION_REVIEW", "expected_affected": "rider"},
+    {"trip_id": "SIM-NS-002", "expected_status": "human_review", "expected_liability": "undetermined"},
+    {"trip_id": "SIM-LR-002", "expected_status": "human_review", "expected_liability": "undetermined"},
+    {"trip_id": "SIM-NS-003", "expected_status": "challenge_window", "expected_liability": "refund", "expected_mode": "DECISION_REVIEW", "expected_affected": "driver"},
+    {"trip_id": "SIM-NS-004", "expected_status": "challenge_window", "expected_liability": "refund", "expected_mode": "EVIDENCE_REQUIRED", "expected_affected": "driver",
+     "with_evidence": {"expected_status": "closed", "expected_liability": "charge_upheld", "expected_refund_cents": 0},
+     "without_evidence": {"expected_status": "closed", "expected_basis": "BURDEN_NOT_MET", "expected_refund_cents": 661}},
+    {"trip_id": "SIM-NS-005", "expected_status": "challenge_window", "expected_liability": "charge_upheld", "expected_mode": "EVIDENCE_REQUIRED", "expected_affected": "rider",
+     "with_evidence": {"expected_status": "closed", "expected_liability": "refund", "expected_refund_cents": 661},
+     "without_evidence": {"expected_status": "closed", "expected_basis": "BURDEN_NOT_MET", "expected_refund_cents": 0}},
+    {"trip_id": "SIM-SAFE-001", "expected_status": "human_review", "expected_liability": "charge_upheld"},
+    {"trip_id": "SIM-HIST-001", "expected_status": "challenge_window", "expected_liability": "charge_upheld", "expected_mode": "DECISION_REVIEW", "expected_affected": "rider"}
+  ]
+}

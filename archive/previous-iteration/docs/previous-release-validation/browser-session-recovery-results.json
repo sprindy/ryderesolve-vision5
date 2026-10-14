@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "legacy_invalid_credential_recovered": true,
+  "session_creations": 1,
+  "role_navigation_preserves_workspace": true,
+  "rider_submit_driver_agree_after_recovery": true,
+  "page_errors": [],
+  "server_version": "demo-rounds-2.1"
+}

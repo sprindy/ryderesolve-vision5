@@ -1,0 +1,9 @@
+{
+  "official_inputs_unchanged": {
+    "backend/data/official_disp_002.md": true,
+    "backend/data/policy_seed.json": true
+  },
+  "original_zip_sha256": "1a9d19049f9e4ff805a4fd13c2b42108a7eb53430b053ac4a9f4fae46492f67b",
+  "technical_document_sha256": "38c8ea9c29677b9819069642ce29783e5ece7948def826b3838fe591cea99ba9",
+  "technical_document_matches_cached_extraction": true
+}

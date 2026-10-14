@@ -1,0 +1,50 @@
+{
+  "note": "Synthetic historical rulings for the demo. They are labelled synthetic everywhere they appear and are not real Ryde cases.",
+  "precedents": [
+    {
+      "case_id": "SEED-NS-01",
+      "decided_on": "2026-10-03",
+      "authority": "HIGH",
+      "outcome": "charge_upheld",
+      "policy_refs": ["HC-RIDER-NOSHOW@demo-2"],
+      "summary": "Driver waited five minutes at the booked pin, messaged and called the rider; a reviewer upheld the no-show charge.",
+      "normalized_fact_features": {"category": "no_show", "driver_present": true, "wait_threshold_met": true, "location_conflict": false, "route_verified": "UNKNOWN", "route_recommended": "UNKNOWN", "fare_unchanged": false, "timing_corroborated": true, "pickup_change_verified": false}
+    },
+    {
+      "case_id": "SEED-NS-02",
+      "decided_on": "2026-10-05",
+      "authority": "MEDIUM",
+      "outcome": "refund",
+      "policy_refs": ["HC-RIDER-NOSHOW@demo-2"],
+      "summary": "Driver cancelled after two minutes at the pickup, before the three-minute threshold; the no-show charge was reversed.",
+      "normalized_fact_features": {"category": "no_show", "driver_present": true, "wait_threshold_met": false, "location_conflict": false, "route_verified": "UNKNOWN", "route_recommended": "UNKNOWN", "fare_unchanged": false, "timing_corroborated": true, "pickup_change_verified": false}
+    },
+    {
+      "case_id": "SEED-NS-03",
+      "decided_on": "2026-10-07",
+      "authority": "HIGH",
+      "outcome": "refund",
+      "policy_refs": ["HC-RIDER-NOSHOW@demo-2"],
+      "summary": "Rider moved the pickup pin before arrival and the server confirmed it; the driver waited at the old pin, so a reviewer reversed the charge.",
+      "normalized_fact_features": {"category": "no_show", "driver_present": false, "wait_threshold_met": true, "location_conflict": true, "route_verified": "UNKNOWN", "route_recommended": "UNKNOWN", "fare_unchanged": false, "timing_corroborated": true, "pickup_change_verified": true}
+    },
+    {
+      "case_id": "SEED-LR-01",
+      "decided_on": "2026-10-04",
+      "authority": "HIGH",
+      "outcome": "charge_upheld",
+      "policy_refs": ["HC-ROUTE-GPS@demo-2", "HC-ROUTE-FIXED@demo-2"],
+      "summary": "Driver followed the fastest navigation route instead of the rider's shorter suggestion; the fixed fare was unchanged, so a reviewer upheld the charge.",
+      "normalized_fact_features": {"category": "long_route", "driver_present": "UNKNOWN", "wait_threshold_met": "UNKNOWN", "location_conflict": false, "route_verified": true, "route_recommended": true, "fare_unchanged": true, "timing_corroborated": true, "pickup_change_verified": false}
+    },
+    {
+      "case_id": "SEED-LR-02",
+      "decided_on": "2026-10-06",
+      "authority": "MEDIUM",
+      "outcome": "refund",
+      "policy_refs": ["HC-ROUTE-GPS@demo-2", "HC-ROUTE-FIXED@demo-2"],
+      "summary": "The route was efficient, but the amount charged was higher than the fixed quote; the excess was refunded.",
+      "normalized_fact_features": {"category": "long_route", "driver_present": "UNKNOWN", "wait_threshold_met": "UNKNOWN", "location_conflict": false, "route_verified": true, "route_recommended": true, "fare_unchanged": false, "timing_corroborated": true, "pickup_change_verified": false}
+    }
+  ]
+}
