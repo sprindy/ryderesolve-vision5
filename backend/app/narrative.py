@@ -11,13 +11,20 @@ REASON_TEXT = {
     'CONTACT_ATTEMPTED': 'The driver messaged and called before cancelling.',
     'INSUFFICIENT_EVIDENCE': 'The available records are not enough to decide liability.',
     'POLICY_UNCERTAIN': 'It is unclear which policy version applies.',
-    'THRESHOLD_NOT_MET': 'The driver cancelled before the policy waiting threshold had passed.',
+    'THRESHOLD_NOT_MET': 'The driver cancelled before the 5-minute free wait, counted from the scheduled pickup time, had passed.',
     'GPS_EFFICIENT_ROUTE': 'GPS follows the navigation route with the shortest estimated travel time.',
     'FIXED_FARE_UNCHANGED': 'The amount charged equals the fixed fare quoted at booking.',
     'RIDER_ROUTE_OPTIONAL': 'Policy lets drivers use the fastest GPS route instead of a rider-suggested one.',
     'EXCESS_FIXED_FARE': 'The amount charged is higher than the fixed fare quoted at booking.',
     'EVIDENCE_INTEGRITY': 'The arrival event and the driver GPS disagree about where the pickup happened.',
-    'DRIVER_NOT_AT_PICKUP': 'A server-confirmed pickup change shows the driver waited at the old pickup pin.',
+    'DRIVER_NOT_AT_PICKUP': 'The records show the driver was not at the pickup point.',
+    'DRIVER_LATE': 'The driver arrived more than 5 minutes after the scheduled pickup time.',
+    'CONTACT_OBLIGATION_NOT_MET': 'The driver did not both message and call the rider before cancelling, as policy v2.1 requires.',
+    'FOLLOWED_RECOMMENDED_ROUTE': 'The driver took the recommended route.',
+    'WITHIN_ROUTE_TOLERANCE': 'The extra distance is within the 1 km tolerance.',
+    'RIDER_INFORMED_OF_REROUTE': 'The driver told the rider about the reroute before deviating.',
+    'REROUTE_NOT_NOTIFIED': 'The driver rerouted for traffic but did not tell the rider.',
+    'UNJUSTIFIED_DEVIATION': 'The driver deviated with no traffic reason and did not tell the rider.',
 }
 
 OUTCOME = {
@@ -53,8 +60,8 @@ def fact_phrase(kind, value):
     phrases = {
         'driver_present': 'GPS shows the driver at the pickup' if value else 'GPS does not show the driver at the pickup',
         'wait_minutes': f'the driver waited {num(value)} minutes',
-        'contact_attempts': f'the driver tried to reach the rider {value} times' if value else 'the driver made no contact attempt',
-        'rider_responses': f'the rider replied {value} times' if value else 'the rider did not reply',
+        'contact_attempts': (f'the driver tried to reach the rider {value} times' if value!=1 else 'the driver tried to reach the rider once') if value else 'the driver made no contact attempt',
+        'rider_responses': (f'the rider replied {value} times' if value!=1 else 'the rider replied once') if value else 'the rider did not reply',
         'pickup_location_conflict': 'GPS and the pickup pin disagree' if value else 'GPS matches the pickup pin',
         'pickup_changed_verified': 'the server confirms a pickup change' if value else 'there is no confirmed pickup change',
         'policy_wait_minutes': f'the policy threshold is {num(value)} minutes',

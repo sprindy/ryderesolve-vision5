@@ -10,23 +10,29 @@ Built for the **AI CAN DO IT · Tencent Cloud Hackathon Singapore 2026**, Digita
 
 ```mermaid
 flowchart LR
-  A[Rider submits dispute] --> B[Rider Advocate<br/>read-only tools]
-  B --> C[Driver Advocate<br/>read-only tools]
-  C --> V[Validator<br/>grounding + narrative guards]
-  V --> P[Policy & Precedent Agent<br/>rule in force + past rulings]
-  P --> J[Judge<br/>follows or distinguishes]
-  J --> K{Dual key:<br/>Judge = policy rule?}
+  A[Rider submits dispute] --> R1
+  subgraph DEBATE[Debate: at most 3 rounds]
+    R1[Rider Advocate: rider-side evidence<br/>Driver Advocate: driver-side evidence] --> G{Round 2+:<br/>any new trip evidence?}
+    G -- yes --> V[Validator] --> P[Policy & Precedent Agent] --> J[Judge]
+    J --> Q{Clear ruling,<br/>confidence ≥ 0.85?}
+    Q -- no, rounds left --> R1
+  end
+  G -- no --> X[Debate stops]
+  Q -- yes / round 3 --> X
+  X --> K{Dual key:<br/>Judge = policy rule?}
   K -- no --> H[Human review]
-  K -- yes --> R{Routing}
-  R -- hard blocker<br/>safety, conflict, ambiguity --> H
-  R -- sufficient evidence --> W1[12h window · DECISION_REVIEW<br/>affected party may challenge]
-  R -- party-correctable gap --> W2[12h window · EVIDENCE_REQUIRED<br/>affected party must upload evidence]
+  K -- yes --> RT{Routing}
+  RT -- hard blocker --> H
+  RT -- sufficient evidence --> W1[12h window · DECISION_REVIEW]
+  RT -- party-correctable gap --> W2[12h window · EVIDENCE_REQUIRED]
   W1 & W2 -- accept / deadline --> F[Final decision<br/>deterministic Refund Engine]
-  W1 & W2 -- verified evidence --> D[Advocate debate ≤3 rounds<br/>+ final Judge]
+  W1 & W2 -- verified upload --> D[New debate: the upload is the new evidence]
   D -- resolved --> F
   D -- unresolved --> H
   H --> F
 ```
+
+**How the debate works.** Every dispute is debated. Each round, the Rider Advocate gathers evidence from the rider's side (complaint, rider profile and history, fare breakdown, rider uploads) and the Driver Advocate from the driver's side (driver GPS, driver profile and history, driver uploads); the trip record, policy and platform logs (chat, app events, navigation) are shared. Both argue, the Policy & Precedent Agent advises, and the Judge rules. A clear ruling with confidence ≥ 0.85 ends the debate. Otherwise the next round must bring new trip evidence; if neither advocate finds any at the start of a round, the debate stops. At most three rounds. In the demo a no-show is usually settled in round 2 (chat and app events), a route dispute in round 3 (navigation alternatives).
 
 **Who may challenge?** Only the party adversely affected by the preliminary decision. A refund affects the Driver; an upheld charge affects the Rider.
 
@@ -45,6 +51,7 @@ If no preliminary liability can be determined at all (for example, the platform'
 |---|---|---|
 | **Rider Advocate** | Chooses which read-only tools to call (trip, GPS, chat signals, fare breakdown, history, policy, precedents) and argues the rider's case with cited evidence IDs | Mutate data, calculate money, cite evidence it did not retrieve |
 | **Driver Advocate** | Same, for the driver: arrival, waiting, contact attempts, route choice | Same |
+| **Communication Analyst** | Reads the whole trip chat once per case and labels what each message means: whether the driver announced a reroute (in English, Singlish, Chinese or Malay), whether a reason was given, whether the rider agreed. Every agent and validator uses the same reading | Decide who sent a message or when: sender and timing are checked in code, so a label cannot move a notice before the deviation. If the model is unavailable or below 0.7 confidence, the case goes to a person (`REROUTE_NOTICE_UNCERTAIN`); there is no keyword fallback. Offline runs use a keyword stand-in for tests only |
 | **Policy & Precedent Agent** | Runs before every Judge ruling: selects the policy version in force at the trip time, retrieves comparable past rulings (with the facts that differ), recommends an outcome and surfaces reviewer corrections awaiting approval | Decide liability; the Judge must follow its recommendation or name the facts that make the case different |
 | **Judge** | Weighs both validated arguments, applies the pinned policy, returns liability, reason codes, a reviewer summary and plain-language explanations for each party | Calculate money; automate anything the policy rule disagrees with |
 
@@ -63,21 +70,31 @@ Everything else is deterministic code: validators, confidence engine, challenge 
 - **Prompt-injection hygiene.** Chat, complaints and uploads are treated as data, never as instructions. Tools are whitelisted, parameterised and scoped to the case.
 - **Bounded autonomy.** At most 3 debate rounds, 12 tool turns per agent and one JSON repair turn. Any provider failure escalates to human review; there is no silent fallback to rules.
 
-## Demo scenarios (synthetic data, official Ryde Help Center policy text)
+## Policy
 
-| Trip | Situation | What happens |
+All decisions apply the official **Ryde Dispute Resolution Policy v2.1** (23 clauses in `backend/data/policy_seed.json`): the 5-minute free wait from the scheduled pickup time, the S$5 no-show fee, the message-AND-call contact obligation, the route refund matrix (1 km tolerance, rider notification, traffic justification) and the ruling thresholds (route deviations above 2 km and fraud-flagged accounts below 95% confidence go to a person; AI never rules on safety). The earlier Help Center articles stay in the knowledge base; where they conflict with v2.1 the conflict is recorded and v2.1 prevails. See [docs/policy-gap-analysis.md](docs/policy-gap-analysis.md). The organisers' DISP-002 sample keeps its own sample policy; their DISP-001 route sample is decided under v2.1.
+
+## Test data
+
+The system runs on **100 synthetic test cases** generated from policy v2.1: 50 cases (`scripts/generate_benchmark.py`) covering all 33 scenario groups, and a hard variant of each (`scripts/generate_hard_variants.py`), plus the organisers' two official samples:
+
+| Set | Cases | What they cover |
 |---|---|---|
-| `SIM-NS-001` | Driver waited 4 min at the pin and messaged/called | Charge upheld → Rider may challenge (decision review) |
-| `SIM-NS-003` | Driver cancelled after 2 min | Refund S$6.61 → Driver may challenge |
-| `SIM-NS-004` | 2-min wait recorded only on the client clock | Preliminary refund, **Driver must supply evidence**. Upload the server export → agents debate → charge upheld. No upload → refund stands |
-| `SIM-NS-005` | Rider moved the pickup pin; the change never reached the server | Preliminary charge upheld, **Rider must supply evidence**. Upload the pickup-change receipt → driver was at the old pin → refund S$6.61 |
-| `SIM-LR-001` | Longer road, but the fastest GPS route with a fixed fare | Charge upheld; fare breakdown (surge, fee, promo) reconciles |
-| `SIM-LR-002` | Platform navigation records missing | No liability possible → human review |
-| `SIM-NS-002` | Arrival event and GPS disagree | Evidence-integrity conflict → human review |
-| `SIM-SAFE-001` | Threat in chat | Safety → human review, no automation |
-| `SIM-HIST-001` | Rider with a poor dispute history | History raises corroboration needs but does not change the outcome |
+| 25 `BM-NS` no-show | 9 simple, 16 complex | proper waits; short waits; late drivers; message-without-call; GPS away from the pin; pickup changes (server-confirmed or not); phone-clock timing; fraud history; safety threats; missing contact records |
+| 25 `BM-RD` route deviation | 12 simple, 13 complex | recommended route; within 1 km; informed reroutes; uninformed reroutes with or without a traffic incident; deviations above 2 km; missing navigation; route/fare conflicts; safety |
 
-**Five-minute walkthrough:** In the Rider app, submit `SIM-NS-005`. Open the Driver app to see that the Driver cannot act. Back in the Rider app, click *Download demo server export*, upload it and submit the challenge. Then open Admin → *Response rounds* to watch the Rider Advocate and Driver Advocate debate and the Judge reverse the charge. Repeat with `SIM-NS-004` from the Driver side, and use Admin → *Simulate +12 hours* to see the burden-not-met path.
+| `DISP-002` official no-show | 1 | the organisers' no-show sample, with its own sample policy |
+| `DISP-001` official route deviation | 1 | the organisers' route sample: 24.8 km driven against a 20.5 km recommended route, a traffic incident on the expressway, no reroute notice to the rider |
+
+The official sample files also contain the organisers' expected ruling and written analysis. `backend/app/official_samples.py` loads only the raw records: it drops `case_metadata`, `recommended_ruling`, `evidence_summary`, `traffic_analysis`, `chat_log_analysis` and the fare note, removes evaluative sentences from the traffic descriptions, and marks every field it derives to fit the evidence schema (navigation routes, app events). For DISP-001 the system reaches the expected **S$3.44 partial refund** (the excess-distance fare) on its own, but routes the case to a person: v2.1 §6.2 lets the AI rule on route deviations only up to 2 km, and this one is 4.3 km. `scripts/run_benchmark.py` scores DISP-001 separately from the test cases.
+
+**Hard variants** (`HD-NS`, `HD-RD`, `scripts/generate_hard_variants.py`): the same 50 cases with the same facts and expected answers, written the way real trips look. Every chat message is reworded by hand with the same meaning in Singlish, Chinese, Malay-English, casual English or with typos; 8 route cases where the driver gave no notice get a driver complaint about traffic (a complaint is not a notice); GPS points move by up to 8 m; record order is shuffled. Run `python scripts/run_benchmark.py --set hard`. The offline keyword readers drop from 100% to 78% outcome accuracy here (route liability 36%): reroute notices in Singlish or Chinese are missed (6 cases), traffic complaints are taken as notices (2), and reworded threats are not flagged for safety review (3). This is the gap the LLM agents are meant to close.
+
+Each case holds only raw records: trip, GPS, chat and calls, app events, navigation routes, traffic incidents, fare breakdown and profiles. No record states a conclusion, and the expected answers are stored separately for scoring only.
+
+`BM-NS-027` and `031` ship a server export the rider can upload: the pickup-pin change that never synced. They demonstrate the evidence-required challenge.
+
+**Five-minute walkthrough:** In the Rider app, submit `BM-NS-027`. The agents uphold the fee provisionally but flag the unsynced pickup change, so only the Rider may challenge, and only with evidence. Open the Driver app to see that the Driver cannot act. Back in the Rider app, click *Download demo server export*, upload it and submit the challenge. Open Admin → *Debate rounds* to watch the advocates argue with the new evidence and the Judge reverse the fee. Submit `BM-NS-031` and use Admin → *Skip ahead 12 hours* to see the burden-not-met path, then try `BM-RD-022` (a 3.3 km uninformed detour that v2.1 sends to a person).
 
 ## Run it
 
@@ -90,33 +107,49 @@ pip install -r backend/requirements.txt
 python -m uvicorn app.main:app --app-dir backend --host 127.0.0.1 --port 8000
 ```
 
-Open http://127.0.0.1:8000/rider, `/driver` and `/admin`. The API docs are at `/docs`. Each browser gets an isolated, signed demo workspace in which you can switch between the three roles. This is an identity stub, not production login.
+Open http://127.0.0.1:8000/rider, `/driver` and `/admin`. The API docs are at `/docs`. Each browser gets an isolated, signed demo workspace in which you can switch between the three roles (an identity stub, not production login). All trip evidence is loaded from `backend/data/` at startup; no database file is needed.
 
-### Use a real model (Tencent Cloud or any OpenAI-compatible API)
+### Connect a real model
 
-Copy `backend/.env.example` to `backend/.env` and set:
+The agents run on a real LLM when `AGENT_MODE=llm`. Settings live in `backend/.env` (never committed; start from `backend/.env.example`). Two ways to connect:
+
+**A. WorkBuddy Cloud (keyless).** Activate the WorkBuddy Cloud service for this project in WorkBuddy Desktop; it fills `llm-proxy/proxy-config.json` (also never committed). Then:
+
+```bash
+cd llm-proxy && npm install && npm start      # OpenAI-compatible proxy on http://127.0.0.1:8877
+```
 
 ```bash
 AGENT_MODE=llm
 LLM_API_STYLE=chat_completions
-LLM_BASE_URL=https://api.hunyuan.cloud.tencent.com/v1     # or https://api.lkeap.cloud.tencent.com/v1 for DeepSeek
-LLM_MODEL=hunyuan-turbos-latest                            # confirm the model name in your console
-LLM_API_KEY=...
+LLM_BASE_URL=http://127.0.0.1:8877
+LLM_MODEL=proxy                                # first enabled model; or set LLM_PROXY_MODEL for the proxy
+LLM_API_KEY=local-proxy-no-key-needed
 ```
 
-The key stays on the server. Without these settings the app runs fully offline with deterministic agents that follow the same contracts.
+**B. Any OpenAI-compatible API** (Tencent Hunyuan, DeepSeek on Tencent LKE, OpenAI, ...): set `LLM_BASE_URL`, `LLM_MODEL` and `LLM_API_KEY` from your provider console. The model must support function calling: the advocates gather evidence through tools.
+
+Check the connection, then run one dispute with the real model:
+
+```bash
+python scripts/llm_check.py           # config, JSON reply, tool-call round trip
+python scripts/llm_check.py --case    # one full dispute: debate rounds, Judge ruling, model calls and tokens
+```
+
+Without these settings the app runs fully offline with deterministic agents that follow the same contracts. Provider errors never fall back silently: the case goes to a person.
 
 ## Tests and benchmark
 
 ```bash
-cd backend && python -m unittest discover -s tests -p "test_*.py"    # 109 tests, about 1 minute
-cd .. && python scripts/demo_benchmark.py                               # 9 scenarios + evidence branches
-python scripts/http_smoke.py                                            # real uvicorn server over HTTP
+cd backend && python -m unittest discover -s tests -p "test_*.py"    # 130 tests, about 2 minutes
+python scripts/run_benchmark.py                                         # 50 test cases, scored (--set hard for the hard variants)
+AGENT_MODE=llm python scripts/run_benchmark.py --limit 10               # same, with the real model
+python scripts/generate_benchmark.py                                    # regenerate the benchmark data
 ```
 
-The suite covers the challenge-window rules, both evidence branches, idempotent settlement under concurrency, tampered uploads, prompt injection in complaints, policy-version pinning, precedent feedback, and the **LLM path end to end with a scripted model** (tool loop, JSON repair, dual-key disagreement, money-in-narrative rejection).
+The suite covers the challenge-window rules, both evidence branches, idempotent settlement under concurrency, tampered uploads, prompt injection, policy-version pinning, precedent feedback, and the LLM path end to end with a scripted model (tool loop, JSON repair, dual-key disagreement, money-in-narrative rejection).
 
-Latest deterministic benchmark ([docs/demo-benchmark-results.json](docs/demo-benchmark-results.json)): 9/9 scenarios pass. 4 go to decision review, 2 to evidence-required, 3 to human review. Median end-to-end assessment latency is about 0.3 s offline. These figures describe the synthetic fixture set only, not production accuracy.
+**Benchmark.** 50 synthetic cases (25 no-show, 25 route deviation, every scenario group) plus their 50 hard variants, with expected outcomes written from policy v2.1. The app never sees the answers: they live only in `docs/benchmark-expected.json`, read by the scoring script. Each case is scored on the **outcome** (automated ruling or hand-off to a person) and on the Judge's **liability recommendation**. Deterministic mode currently scores 50/50 on both, with every refund amount correct — but because the rules engine and the expected answers were written from the same policy, that number measures how faithfully the policy is implemented, not judgement. **The meaningful number is the LLM-mode score** ([docs/benchmark-results.json](docs/benchmark-results.json) after an LLM run).
 
 ## Repository layout
 

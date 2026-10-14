@@ -1,3 +1,29 @@
 .admin-page{max-width:1450px;margin:auto;padding:36px}.brand-tail{font-size:16px;font-weight:500;color:#384847;margin-left:8px}.admin-toolbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:20px}.tabbar{display:flex;gap:8px;flex-wrap:wrap;margin:24px 0}.tabbar button{background:white;color:#43545a;border:1px solid #dce5e5}.tabbar button.active{background:#153b35;color:white}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.stat{background:white;border:1px solid #dce5e5;border-radius:16px;padding:20px}.stat strong{display:block;font-size:28px;margin:8px 0;color:#173d36}.stat small{color:#677b80}.admin-cols{display:grid;grid-template-columns:1.2fr 1fr;gap:20px}.stagebar{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}.stage{border-radius:8px;background:#eff4f3;padding:10px;font-size:12px}.stage.done{background:#d4f3e5}.stage.current{outline:2px solid #136e54}pre{max-height:500px;overflow:auto;white-space:pre-wrap;word-break:break-word;font-size:12px;background:#f3f6f6;padding:16px;border-radius:8px}summary{cursor:pointer;padding:12px 0}details{border-bottom:1px solid #e3eaea}td,th{text-align:left;vertical-align:top;padding:12px;border-bottom:1px solid #e3eaea;font-size:13px}table{width:100%;border-collapse:collapse}.tablewrap{overflow:auto}.notice{background:#edf8f1;border-radius:10px;padding:14px;margin:16px 0}.notice.error{background:#fff0eb;color:#932e15}.empty{text-align:center;padding:48px}.warn{background:#fff1d8!important;color:#805718!important}.errorpill{background:#ffe4df!important;color:#9d3426!important}.card p{line-height:1.6}.audit-line{display:grid;grid-template-columns:170px 1fr;gap:16px;padding:12px 0;border-bottom:1px solid #e3eaea}.audit-line small{color:#7b8e90}.round-head{display:flex;justify-content:space-between;gap:16px;align-items:center}.pill{margin:4px}.evidence-search{margin-bottom:14px}@media(max-width:900px){.admin-cols,.stats{grid-template-columns:1fr 1fr}.admin-page{padding:20px}}@media(max-width:600px){.admin-cols,.stats{grid-template-columns:1fr}.audit-line{grid-template-columns:1fr}.top .nav{display:none}}
 
+/* ── Sub-menu groups in the sidebar ── */
+.side-group{margin-bottom:2px}
+.side-group .side-label{display:flex;align-items:center;gap:6px}
+.side-case-id{font-size:9px;color:#d83541;font-weight:700;letter-spacing:.04em;text-transform:none;background:#fcedee;padding:2px 6px;border-radius:4px;margin-left:4px}
+.side-pill-count{font-size:9px;padding:1px 5px;margin-left:auto}
+
+/* ── Breadcrumb in workspace-top ── */
+.page-breadcrumb{display:flex;align-items:center;gap:7px;font-size:12px;color:#8991a2;font-weight:500}
+.crumb-root{font-weight:700;color:#262c3c}
+.crumb-sep{color:#c3c9d2;font-size:10px}
+.crumb-section{color:#596174}
+.crumb-page{color:#d83541;font-weight:650}
+
+/* ── Page context badge in hero ── */
+.page-context-badge{display:inline-flex;align-items:center;gap:5px;background:#fcedee;color:#d83541;padding:4px 11px;border-radius:6px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
+
+/* ── Sidebar active state for current section group ── */
+.side-group:has(.side-link.active) .side-label{color:#d83541}
+
+@media(max-width:700px){
+.page-breadcrumb{font-size:11px}
+.page-context-badge{font-size:9px;padding:3px 8px}
+.side-group .side-label{display:none}
+.side-group .side-link{white-space:nowrap}
+}
+
 

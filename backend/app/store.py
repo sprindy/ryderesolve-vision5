@@ -112,17 +112,13 @@ def init():
     CREATE TABLE IF NOT EXISTS demo_sessions(session_id TEXT PRIMARY KEY,secret TEXT NOT NULL,created_at TEXT NOT NULL);
     CREATE TABLE IF NOT EXISTS case_sequences(name TEXT PRIMARY KEY,value INTEGER NOT NULL);
     ''')
-    if not c.execute('SELECT COUNT(*) FROM source_records').fetchone()[0]:
-        text = (BASE/'data/official_disp_002.md').read_text(encoding='utf-8-sig')
-        dataset = json.loads(re.search(r'```json\s*(.*?)\s*```',text,re.S).group(1))
-        for section, value in dataset.items():
-            records = value if isinstance(value,list) else [value]
-            for index, data in enumerate(records,1):
-                c.execute('INSERT INTO source_records VALUES(?,?,?,?)',(f'{section}:{index}',section,'DISP-002',encode(data)))
-        seed = json.loads((BASE/'data/policy_seed.json').read_text(encoding='utf-8'))
-        for s in seed['sources']: c.execute('INSERT INTO official_policy_sources VALUES(?,?)',(s['source_id'],encode(s)))
-        for p in seed['clauses']: c.execute('INSERT INTO official_policy_clauses VALUES(?,?,?,?)',(p['policy_id'],p['source_id'],p['topic'],encode(p)))
-        for p in seed['conflicts']: c.execute('INSERT INTO policy_conflicts VALUES(?,?)',(p['conflict_id'],encode(p)))
+    from .official_samples import seed as seed_official
+    seed_official(c)  # organisers' samples DISP-002 and DISP-001, answers stripped
+    # Idempotent, so clauses added to the seed (e.g. policy v2.1) also reach existing databases.
+    seed = json.loads((BASE/'data/policy_seed.json').read_text(encoding='utf-8'))
+    for s in seed['sources']: c.execute('INSERT OR IGNORE INTO official_policy_sources VALUES(?,?)',(s['source_id'],encode(s)))
+    for p in seed['clauses']: c.execute('INSERT OR IGNORE INTO official_policy_clauses VALUES(?,?,?,?)',(p['policy_id'],p['source_id'],p['topic'],encode(p)))
+    for p in seed['conflicts']: c.execute('INSERT OR IGNORE INTO policy_conflicts VALUES(?,?)',(p['conflict_id'],encode(p)))
     from .simulation import seed
     seed(c)
     c.execute("INSERT OR IGNORE INTO case_sequences VALUES('case_id',1044)")

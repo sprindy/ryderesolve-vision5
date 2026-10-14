@@ -1,0 +1,402 @@
+[
+ {
+  "trip_id": "HD-NS-001",
+  "category": "no_show",
+  "title": "Benchmark no-show case #1 (hard variant)",
+  "description": "No-show charge dispute (simple scenario).",
+  "complaint": "I was charged a $5.00 no-show fee unfairly. Please review the trip records.",
+  "set": "hard"
+ },
+ {
+  "trip_id": "HD-NS-004",
+  "category": "no_show",
+  "title": "Benchmark no-show case #4 (hard variant)",
+  "description": "No-show charge dispute (simple scenario).",
+  "complaint": "I was charged a $5.00 no-show fee unfairly. Please review the trip records.",
+  "set": "hard"
+ },
+ {
+  "trip_id": "HD-NS-008",
+  "category": "no_show",
+  "title": "Benchmark no-show case #8 (hard variant)",
+  "description": "No-show charge dispute (simple scenario).",
+  "complaint": "I was charged a $5.00 no-show fee unfairly. Please review the trip records.",
+  "set": "hard"
+ },
+ {
+  "trip_id": "HD-NS-016",
+  "category": "no_show",
+  "title": "Benchmark no-show case #16 (hard variant)",
+  "description": "No-show charge dispute (simple scenario).",
+  "complaint": "I was charged a $5.00 no-show fee unfairly. Please review the trip records.",
+  "set": "hard"
+ },
+ {
+  "trip_id": "HD-NS-017",
+  "category": "no_show",
+  "title": "Benchmark no-show case #17 (hard variant)",
+  "description": "No-show charge dispute (simple scenario).",
+  "complaint": "I was charged a $5.00 no-show fee unfairly. Please review the trip records.",
+  "set": "hard"
+ },
+ {
+  "trip_id": "HD-NS-018",
+  "category": "no_show",
+  "title": "Benchmark no-show case #18 (hard variant)",
+  "description": "No-show charge dispute (simple scenario).",
+  "complaint": "I was charged a $5.00 no-show fee unfairly. Please review the trip records.",
+  "set": "hard"
+ },
+ {
+  "trip_id": "HD-NS-022",
+  "category": "no_show",
+  "title": "Benchmark no-show case #22 (hard variant)",
+  "description": "No-show charge dispute (simple scenario).",
+  "complaint": "I was charged a $5.00 no-show fee unfairly. Please review the trip records.",
+  "set": "hard"
+ },
+ {
+  "trip_id": "HD-NS-023",
+  "category": "no_show",
+  "title": "Benchmark no-show case #23 (hard variant)",
+  "description": "No-show charge dispute (simple scenario).",
+  "complaint": "I was charged a $5.00 no-show fee unfairly. Please review the trip records.",
+  "set": "hard"
+ },
+ {
+  "trip_id": "HD-NS-024",
+  "category": "no_show",
+  "title": "Benchmark no-show case #24 (hard variant)",
+  "description": "No-show charge dispute (simple scenario).",
+  "complaint": "I was charged a $5.00 no-show fee unfairly. Please review the trip records.",
+  "set": "hard"
+ },
+ {
+  "trip_id": "HD-NS-026",
+  "category": "no_show",
+  "title": "Benchmark no-show case #26 (hard variant)",
+  "description": "No-show charge dispute (complex scenario).",
+  "complaint": "I was charged a $5.00 no-show fee unfairly. Please review the trip records.",
+  "set": "hard"
+ },
+ {
+  "trip_id": "HD-NS-027",
+  "category": "no_show",
+  "title": "Benchmark no-show case #27 (hard variant)",
+  "description": "No-show charge dispute (complex scenario).",
+  "complaint": "I was charged a $5.00 no-show fee unfairly. Please review the trip records.",
+  "set": "hard"
+ },
+ {
+  "trip_id": "HD-NS-028",
+  "category": "no_show",
+  "title": "Benchmark no-show case #28 (hard variant)",
+  "description": "No-show charge dispute (complex scenario).",
+  "complaint": "I was charged a $5.00 no-show fee unfairly. Please review the trip records.",
+  "set": "hard"
+ },
+ {
+  "trip_id": "HD-NS-029",
+  "category": "no_show",
+  "title": "Benchmark no-show case #29 (hard variant)",
+  "description": "No-show charge dispute (complex scenario).",
+  "complaint": "I was charged a $5.00 no-show fee unfairly. Please review the trip records.",
+  "set": "hard"
+ },
+ {
+  "trip_id": "HD-NS-030",
+  "category": "no_show",
+  "title": "Benchmark no-show case #30 (hard variant)",
+  "description": "No-show charge dispute (complex scenario).",
+  "complaint": "I was charged a $5.00 no-show fee unfairly. Please review the trip records.",
+  "set": "hard"
+ },
+ {
+  "trip_id": "HD-NS-031",
+  "category": "no_show",
+  "title": "Benchmark no-show case #31 (hard variant)",
+  "description": "No-show charge dispute (complex scenario).",
+  "complaint": "I was charged a $5.00 no-show fee unfairly. Please review the trip records.",
+  "set": "hard"
+ },
+ {
+  "trip_id": "HD-NS-036",
+  "category": "no_show",
+  "title": "Benchmark no-show case #36 (hard variant)",
+  "description": "No-show charge dispute (complex scenario).",
+  "complaint": "I was charged a $5.00 no-show fee unfairly. Please review the trip records.",
+  "set": "hard"
+ },
+ {
+  "trip_id": "HD-NS-037",
+  "category": "no_show",
+  "title": "Benchmark no-show case #37 (hard variant)",
+  "description": "No-show charge dispute (complex scenario).",
+  "complaint": "I was charged a $5.00 no-show fee unfairly. Please review the trip records.",
+  "set": "hard"
+ },
+ {
+  "trip_id": "HD-NS-038",
+  "category": "no_show",
+  "title": "Benchmark no-show case #38 (hard variant)",
+  "description": "No-show charge dispute (complex scenario).",
+  "complaint": "I was charged a $5.00 no-show fee unfairly. Please review the trip records.",
+  "set": "hard"
+ },
+ {
+  "trip_id": "HD-NS-042",
+  "category": "no_show",
+  "title": "Benchmark no-show case #42 (hard variant)",
+  "description": "No-show charge dispute (complex scenario).",
+  "complaint": "I was charged a $5.00 no-show fee unfairly. Please review the trip records.",
+  "set": "hard"
+ },
+ {
+  "trip_id": "HD-NS-044",
+  "category": "no_show",
+  "title": "Benchmark no-show case #44 (hard variant)",
+  "description": "No-show charge dispute (complex scenario).",
+  "complaint": "I was charged a $5.00 no-show fee unfairly. Please review the trip records.",
+  "set": "hard"
+ },
+ {
+  "trip_id": "HD-NS-046",
+  "category": "no_show",
+  "title": "Benchmark no-show case #46 (hard variant)",
+  "description": "No-show charge dispute (complex scenario).",
+  "complaint": "I was charged a $5.00 no-show fee unfairly. Please review the trip records.",
+  "set": "hard"
+ },
+ {
+  "trip_id": "HD-NS-047",
+  "category": "no_show",
+  "title": "Benchmark no-show case #47 (hard variant)",
+  "description": "No-show charge dispute (complex scenario).",
+  "complaint": "I was charged a $5.00 no-show fee unfairly. Please review the trip records.",
+  "set": "hard"
+ },
+ {
+  "trip_id": "HD-NS-048",
+  "category": "no_show",
+  "title": "Benchmark no-show case #48 (hard variant)",
+  "description": "No-show charge dispute (complex scenario).",
+  "complaint": "I was charged a $5.00 no-show fee unfairly. Please review the trip records.",
+  "set": "hard"
+ },
+ {
+  "trip_id": "HD-NS-049",
+  "category": "no_show",
+  "title": "Benchmark no-show case #49 (hard variant)",
+  "description": "No-show charge dispute (complex scenario).",
+  "complaint": "I was charged a $5.00 no-show fee unfairly. Please review the trip records.",
+  "set": "hard"
+ },
+ {
+  "trip_id": "HD-NS-050",
+  "category": "no_show",
+  "title": "Benchmark no-show case #50 (hard variant)",
+  "description": "No-show charge dispute (complex scenario).",
+  "complaint": "I was charged a $5.00 no-show fee unfairly. Please review the trip records.",
+  "set": "hard"
+ },
+ {
+  "trip_id": "HD-RD-001",
+  "category": "long_route",
+  "title": "Benchmark route deviation case #1 (hard variant)",
+  "description": "Route deviation dispute (simple scenario).",
+  "complaint": "I believe I was overcharged for this trip from Clementi Mall to NEX Serangoon. The fare was $18.00. Please review.",
+  "set": "hard"
+ },
+ {
+  "trip_id": "HD-RD-003",
+  "category": "long_route",
+  "title": "Benchmark route deviation case #3 (hard variant)",
+  "description": "Route deviation dispute (simple scenario).",
+  "complaint": "I believe I was overcharged for this trip from Paya Lebar Quarter to Sentosa Gateway. The fare was $12.00. Please review.",
+  "set": "hard"
+ },
+ {
+  "trip_id": "HD-RD-006",
+  "category": "long_route",
+  "title": "Benchmark route deviation case #6 (hard variant)",
+  "description": "Route deviation dispute (simple scenario).",
+  "complaint": "The driver took a longer route (3.2 km extra) and I was charged $15.00 instead of $15.00. I was informed but want to verify the fare.",
+  "set": "hard"
+ },
+ {
+  "trip_id": "HD-RD-008",
+  "category": "long_route",
+  "title": "Benchmark route deviation case #8 (hard variant)",
+  "description": "Route deviation dispute (simple scenario).",
+  "complaint": "The driver took a longer route (2.0 km extra) and I was charged $15.00 instead of $15.00. I was informed but want to verify the fare.",
+  "set": "hard"
+ },
+ {
+  "trip_id": "HD-RD-009",
+  "category": "long_route",
+  "title": "Benchmark route deviation case #9 (hard variant)",
+  "description": "Route deviation dispute (simple scenario).",
+  "complaint": "The driver took a longer route (1.9 km extra) and I was charged $15.00 instead of $15.00. I was informed but want to verify the fare.",
+  "set": "hard"
+ },
+ {
+  "trip_id": "HD-RD-011",
+  "category": "long_route",
+  "title": "Benchmark route deviation case #11 (hard variant)",
+  "description": "Route deviation dispute (simple scenario).",
+  "complaint": "The driver took a longer route from Orchard Central to Bugis Junction without telling me. The fare was $18.00 instead of the estimated $18.00. The extra distance was 0.7 km. I am requesting a refund of the excess fare.",
+  "set": "hard"
+ },
+ {
+  "trip_id": "HD-RD-014",
+  "category": "long_route",
+  "title": "Benchmark route deviation case #14 (hard variant)",
+  "description": "Route deviation dispute (simple scenario).",
+  "complaint": "The driver took a longer route from Jurong East MRT to Westgate Jurong without telling me. The fare was $18.00 instead of the estimated $18.00. The extra distance was 0.9 km. I am requesting a refund of the excess fare.",
+  "set": "hard"
+ },
+ {
+  "trip_id": "HD-RD-016",
+  "category": "long_route",
+  "title": "Benchmark route deviation case #16 (hard variant)",
+  "description": "Route deviation dispute (simple scenario).",
+  "complaint": "The driver took a longer route from Clementi Mall to NEX Serangoon without telling me. The fare was $22.80 instead of the estimated $18.00. The extra distance was 3.0 km. I am requesting a refund of the excess fare.",
+  "set": "hard"
+ },
+ {
+  "trip_id": "HD-RD-019",
+  "category": "long_route",
+  "title": "Benchmark route deviation case #19 (hard variant)",
+  "description": "Route deviation dispute (simple scenario).",
+  "complaint": "The driver took a longer route from Funan Mall to VivoCity without telling me. The fare was $31.17 instead of the estimated $28.00. The extra distance was 1.7 km. I am requesting a refund of the excess fare.",
+  "set": "hard"
+ },
+ {
+  "trip_id": "HD-RD-020",
+  "category": "long_route",
+  "title": "Benchmark route deviation case #20 (hard variant)",
+  "description": "Route deviation dispute (simple scenario).",
+  "complaint": "The driver took a longer route from Bugis Junction to Jurong East MRT without telling me. The fare was $21.04 instead of the estimated $18.00. The extra distance was 1.7 km. I am requesting a refund of the excess fare.",
+  "set": "hard"
+ },
+ {
+  "trip_id": "HD-RD-021",
+  "category": "long_route",
+  "title": "Benchmark route deviation case #21 (hard variant)",
+  "description": "Route deviation dispute (simple scenario).",
+  "complaint": "The driver took a longer route from Plaza Singapura to Tiong Bahru Plaza without telling me. The fare was $23.60 instead of the estimated $22.00. The extra distance was 2.0 km. I am requesting a refund of the excess fare.",
+  "set": "hard"
+ },
+ {
+  "trip_id": "HD-RD-022",
+  "category": "long_route",
+  "title": "Benchmark route deviation case #22 (hard variant)",
+  "description": "Route deviation dispute (simple scenario).",
+  "complaint": "The driver took a longer route from Changi Airport T3 to Clementi Mall without telling me. The fare was $20.64 instead of the estimated $18.00. The extra distance was 3.3 km. I am requesting a refund of the excess fare.",
+  "set": "hard"
+ },
+ {
+  "trip_id": "HD-RD-026",
+  "category": "long_route",
+  "title": "Benchmark route deviation case #26 (hard variant)",
+  "description": "Route deviation dispute (complex scenario).",
+  "complaint": "The driver took a longer route (1.3 km extra) and I was charged $19.40 instead of $18.00. I was informed but want to verify the fare.",
+  "set": "hard"
+ },
+ {
+  "trip_id": "HD-RD-027",
+  "category": "long_route",
+  "title": "Benchmark route deviation case #27 (hard variant)",
+  "description": "Route deviation dispute (complex scenario).",
+  "complaint": "The driver took a longer route (2.3 km extra) and I was charged $26.07 instead of $25.00. I was informed but want to verify the fare.",
+  "set": "hard"
+ },
+ {
+  "trip_id": "HD-RD-028",
+  "category": "long_route",
+  "title": "Benchmark route deviation case #28 (hard variant)",
+  "description": "Route deviation dispute (complex scenario).",
+  "complaint": "The driver took a longer route (1.8 km extra) and I was charged $26.39 instead of $25.00. I was informed but want to verify the fare.",
+  "set": "hard"
+ },
+ {
+  "trip_id": "HD-RD-029",
+  "category": "long_route",
+  "title": "Benchmark route deviation case #29 (hard variant)",
+  "description": "Route deviation dispute (complex scenario).",
+  "complaint": "The driver took a longer route (2.1 km extra) and I was charged $19.40 instead of $18.00. I was informed but want to verify the fare.",
+  "set": "hard"
+ },
+ {
+  "trip_id": "HD-RD-030",
+  "category": "long_route",
+  "title": "Benchmark route deviation case #30 (hard variant)",
+  "description": "Route deviation dispute (complex scenario).",
+  "complaint": "The driver took a longer route (1.7 km extra) and I was charged $16.81 instead of $15.00. I was informed but want to verify the fare.",
+  "set": "hard"
+ },
+ {
+  "trip_id": "HD-RD-031",
+  "category": "long_route",
+  "title": "Benchmark route deviation case #31 (hard variant)",
+  "description": "Route deviation dispute (complex scenario).",
+  "complaint": "The driver took a longer route (1.3 km extra) and I was charged $23.69 instead of $22.00. I was informed but want to verify the fare.",
+  "set": "hard"
+ },
+ {
+  "trip_id": "HD-RD-032",
+  "category": "long_route",
+  "title": "Benchmark route deviation case #32 (hard variant)",
+  "description": "Route deviation dispute (complex scenario).",
+  "complaint": "The driver took a longer route (0.4 km extra) and I was charged $15.00 instead of $15.00. I was informed but want to verify the fare.",
+  "set": "hard"
+ },
+ {
+  "trip_id": "HD-RD-036",
+  "category": "long_route",
+  "title": "Benchmark route deviation case #36 (hard variant)",
+  "description": "Route deviation dispute (complex scenario).",
+  "complaint": "The driver took a longer route from Plaza Singapura to Tiong Bahru Plaza without telling me. The fare was $27.39 instead of the estimated $22.00. The extra distance was 4.4 km. I am requesting a refund of the excess fare.",
+  "set": "hard"
+ },
+ {
+  "trip_id": "HD-RD-040",
+  "category": "long_route",
+  "title": "Benchmark route deviation case #40 (hard variant)",
+  "description": "Route deviation dispute (complex scenario).",
+  "complaint": "The driver took a longer route from NEX Serangoon to Funan Mall without telling me. The fare was $20.16 instead of the estimated $18.00. The extra distance was 2.7 km. I am requesting a refund of the excess fare.",
+  "set": "hard"
+ },
+ {
+  "trip_id": "HD-RD-043",
+  "category": "long_route",
+  "title": "Benchmark route deviation case #43 (hard variant)",
+  "description": "Route deviation dispute (complex scenario).",
+  "complaint": "The driver took a longer route from VivoCity to Changi Airport T3 without telling me. The fare was $18.38 instead of the estimated $15.00. The extra distance was 2.6 km. I am requesting a refund of the excess fare.",
+  "set": "hard"
+ },
+ {
+  "trip_id": "HD-RD-046",
+  "category": "long_route",
+  "title": "Benchmark route deviation case #46 (hard variant)",
+  "description": "Route deviation dispute (complex scenario).",
+  "complaint": "The driver took a longer route from Clementi Mall to NEX Serangoon without telling me. The fare was $22.00 instead of the estimated $22.00. The extra distance was 1.3 km. I am requesting a refund of the excess fare.",
+  "set": "hard"
+ },
+ {
+  "trip_id": "HD-RD-048",
+  "category": "long_route",
+  "title": "Benchmark route deviation case #48 (hard variant)",
+  "description": "Route deviation dispute (complex scenario).",
+  "complaint": "The driver took a longer route from Paya Lebar Quarter to Sentosa Gateway without telling me. The fare was $18.00 instead of the estimated $18.00. The extra distance was 3.6 km. I am requesting a refund of the excess fare.",
+  "set": "hard"
+ },
+ {
+  "trip_id": "HD-RD-050",
+  "category": "long_route",
+  "title": "Benchmark route deviation case #50 (hard variant)",
+  "description": "Route deviation dispute (complex scenario).",
+  "complaint": "I believe I was overcharged for this trip from Bugis Junction to Jurong East MRT. The fare was $22.00. Please review.",
+  "set": "hard"
+ }
+]

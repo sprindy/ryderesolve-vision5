@@ -8,13 +8,22 @@ VERSION_NOTE='Synthetic effective dates for demonstration only; not actual histo
 def seed():
     with store.transaction() as c:
         rows=c.execute('SELECT p.data_json,s.data_json AS source_json FROM official_policy_clauses p JOIN official_policy_sources s USING(source_id)').fetchall()
+        # Include all policy IDs that agents should be able to reference at runtime.
+        # Original 5 + all V21 official policy clauses.
+        active_ids={'SAMPLE-DISP-002-NO','SAMPLE-DISP-002-FEE','HC-RIDER-NOSHOW','HC-ROUTE-GPS','HC-ROUTE-FIXED',
+            'V21-ROUTE-PRINCIPLE','V21-ROUTE-NOTIFY','V21-ROUTE-REFUND-MATRIX','V21-ROUTE-EVIDENCE',
+            'V21-NOSHOW-WAIT','V21-NOSHOW-FEE','V21-NOSHOW-CONTACT','V21-DRIVER-NOSHOW','V21-REPEAT-NOSHOW',
+            'V21-SURGE-QUOTE','V21-SURGE-NOTIFY','V21-SURGE-REFUND','V21-SURGE-EXEMPT',
+            'V21-DAMAGE-CLAIM','V21-DAMAGE-EVIDENCE','V21-DAMAGE-FEES','V21-DAMAGE-DISPUTE',
+            'V21-SAFETY-ESCALATE','V21-SAFETY-AI-LIMITS','V21-SAFETY-INTERIM',
+            'V21-THRESHOLD-MONETARY','V21-THRESHOLD-CATEGORY','V21-THRESHOLD-FRAUD'}
         for row in rows:
             raw=json.loads(row['data_json']);raw['source']=json.loads(row['source_json'])
-            if raw['policy_id'] not in ('SAMPLE-DISP-002-NO','SAMPLE-DISP-002-FEE','HC-RIDER-NOSHOW','HC-ROUTE-GPS','HC-ROUTE-FIXED'):continue
+            if raw['policy_id'] not in active_ids:continue
             for version,start,end in [('demo-1','2020-01-01T00:00:00+00:00','2026-10-01T00:00:00+00:00'),('demo-2','2026-10-01T00:00:00+00:00',None)]:
                 p=deepcopy(raw);p.update(version=version,policy_ref=p['policy_id']+'@'+version,effective_from=start,effective_to=end,
-                    priority=10,specificity=10,exceptions=[],category='long_route' if p['topic']=='long_route' else 'no_show',
-                    decision_semantics=['charge_upheld','refund','undetermined'],refund_rule_id='FIXED_FARE_EXCESS' if p['topic']=='long_route' else 'CANCELLATION_FEE_REVERSAL',demo_binding=True,version_note=VERSION_NOTE)
+                    priority=10,specificity=10,exceptions=[],category='long_route' if p['topic']=='long_route' else 'no_show' if p['topic'] in ('no_show','cancellation','waiting_fee') else 'fare' if p['topic']=='fare' else 'property_damage' if p['topic']=='property_damage' else 'safety' if p['topic']=='safety' else 'ruling_threshold' if p['topic']=='ruling_threshold' else 'no_show',
+                    decision_semantics=['charge_upheld','refund','undetermined'],refund_rule_id='V21_EXCESS_DISTANCE' if p['policy_id']=='V21-ROUTE-REFUND-MATRIX' else 'FIXED_FARE_EXCESS' if p['topic']=='long_route' else 'CANCELLATION_FEE_REVERSAL',demo_binding=True,version_note=VERSION_NOTE)
                 c.execute('INSERT OR IGNORE INTO policy_versions VALUES(?,?,?,?)',(p['policy_ref'],p['policy_id'],version,store.encode(p)))
 
 def event_time(state,bundle):
@@ -40,7 +49,7 @@ def resolve(candidates):
 def select(state,bundle):
     from .engines import required_policies
     ids=required_policies(bundle)
-    if not ids:ids=['HC-ROUTE-GPS','HC-ROUTE-FIXED'] if state.get('category')=='long_route' else ['HC-RIDER-NOSHOW'] if state.get('data_kind')=='simulation' else ['SAMPLE-DISP-002-NO','SAMPLE-DISP-002-FEE']
+    if not ids:ids=['V21-ROUTE-PRINCIPLE','V21-ROUTE-NOTIFY','V21-ROUTE-REFUND-MATRIX','V21-ROUTE-EVIDENCE','HC-ROUTE-GPS','HC-ROUTE-FIXED'] if state.get('category')=='long_route' else ['V21-NOSHOW-WAIT','V21-NOSHOW-FEE','V21-NOSHOW-CONTACT','HC-RIDER-NOSHOW']
     if state.get('policy_scope')=='production':return dict(status='POLICY_AMBIGUITY',refs=[],policies=[],errors=['UNKNOWN_REAL_POLICY_EFFECTIVE_DATES'],note='The sample/public snapshot cannot prove real historical applicability.')
     stamp=event_time(state,bundle)
     if not stamp:return dict(status='POLICY_AMBIGUITY',refs=[],policies=[],errors=['EVENT_TIME_UNKNOWN'])
@@ -58,12 +67,17 @@ def select(state,bundle):
 def features(bundle):
     from .engines import facts,values,policy_map
     f=facts(bundle);t=values(bundle,'trip_data');p=policy_map(bundle)
-    threshold=p.get('HC-RIDER-NOSHOW',p.get('SAMPLE-DISP-002-NO',{})).get('parameters',{}).get('wait_min')
+    wait_params=p.get('V21-NOSHOW-WAIT',p.get('HC-RIDER-NOSHOW',p.get('SAMPLE-DISP-002-NO',{}))).get('parameters',{})
+    threshold=wait_params.get('free_wait_min') or wait_params.get('wait_min')
     return dict(category=t[0].get('category','no_show') if t else 'UNKNOWN',driver_present=f.get('driver_present','UNKNOWN'),
         wait_threshold_met=(f.get('wait_minutes',0)>threshold if 'HC-RIDER-NOSHOW' in p else f.get('wait_minutes',0)>=threshold) if threshold is not None and 'wait_minutes' in f else 'UNKNOWN',
         location_conflict=f.get('pickup_location_conflict',False),route_verified=f.get('gps_route_verified','UNKNOWN'),route_recommended=f.get('route_recommended','UNKNOWN'),
         fare_unchanged=f.get('fare_unchanged','UNKNOWN'),timing_corroborated=t[0].get('timing_status')!='CLIENT_CLOCK_UNCORROBORATED' if t else 'UNKNOWN',
-        pickup_change_verified=bool(f.get('pickup_changed_verified')))
+        pickup_change_verified=bool(f.get('pickup_changed_verified')),
+        driver_late=f.get('driver_late_minutes',0)>5 if 'driver_late_minutes' in f else 'UNKNOWN',
+        contact_complete=(f.get('contact_messages',0)>0 and f.get('contact_calls',0)>0) if 'contact_messages' in f else 'UNKNOWN',
+        deviation_over_tolerance=f['deviation_km']>1.0 if 'deviation_km' in f else 'UNKNOWN',
+        rider_informed=f.get('rider_informed_of_reroute','UNKNOWN'),traffic_verified=f.get('traffic_incident_verified','UNKNOWN'))
 
 # Synthetic historical rulings visible to every workspace so precedent retrieval is demonstrable.
 GLOBAL_SCOPE='GLOBAL_SEED'
@@ -71,7 +85,8 @@ def seed_precedents():
     seeds=json.loads((store.BASE/'data/precedent_seed.json').read_text(encoding='utf-8'))
     with store.transaction() as c:
         for p in seeds['precedents']:
-            c.execute('INSERT OR IGNORE INTO precedent_cases VALUES(?,?)',(p['case_id'],store.encode({**p,'session_id':GLOBAL_SCOPE,'synthetic':True,'kind':'SEEDED_PRECEDENT','status':'APPROVED','eligible':True,'final':True})))
+            # Rulings quoted in the official policy document are not synthetic; the demo history is.
+            c.execute('INSERT OR IGNORE INTO precedent_cases VALUES(?,?)',(p['case_id'],store.encode({**p,'session_id':GLOBAL_SCOPE,'synthetic':p.get('source')!='official_v21','kind':'SEEDED_PRECEDENT','status':'APPROVED','eligible':True,'final':True})))
 
 def visible(state,p):
     return p.get('session_id') in (state.get('session_id'),GLOBAL_SCOPE)
@@ -88,15 +103,19 @@ def retrieve(state,bundle,top_k=3):
         p=json.loads(row['data_json'])
         if not p.get('eligible') or not p.get('final') or p.get('case_id')==state.get('case_id'):continue
         if not visible(state,p):continue
-        if set(p.get('policy_refs',[]))!=refs:continue
+        # Same policy family: at least one shared policy (version-pinned refs compared by policy ID).
+        if not {r.split('@')[0] for r in p.get('policy_refs',[])}&{r.split('@')[0] for r in refs}:continue
         old=p.get('normalized_fact_features',{})
         if old.get('category')!=current['category']:continue
-        count=sum(old.get(k)==v for k,v in current.items());score=round(count/len(current)*.9+(.1 if p.get('authority')=='HIGH' else .05),4)
+        shared=[k for k in current if k in old]  # facts an older record never captured are not counted against it
+        if not shared:continue
+        count=sum(old[k]==current[k] for k in shared);score=round(count/len(shared)*.9+(.1 if p.get('authority')=='HIGH' else .05),4)
         if score<.75:continue
-        results.append({**p,'similarity_score':score,'differences':differences(old,current),'score_components':{'structured_fact_matches':count,'fact_count':len(current),'authority_boost':.1 if p.get('authority')=='HIGH' else .05},'ranking_version':'structured-demo-2'})
+        results.append({**p,'similarity_score':score,'differences':differences(old,current),'score_components':{'structured_fact_matches':count,'fact_count':len(shared),'authority_boost':.1 if p.get('authority')=='HIGH' else .05},'ranking_version':'structured-demo-2'})
     return sorted(results,key=lambda p:(-p['similarity_score'],p['case_id']))[:max(1,min(top_k,5))]
 
 def consistency(state,bundle,verdict):
+    if verdict.get('liability')=='undetermined':return dict(status='NOT_APPLICABLE',precedent_refs=[],block_auto=False,note='Abstaining while evidence is incomplete is not a departure from precedent.')
     candidates=retrieve(state,bundle);f=features(bundle)
     comparable=[p for p in candidates if p['normalized_fact_features']==f]
     if not comparable:return dict(status='NO_COMPARABLE_PRECEDENT',precedent_refs=[p['case_id'] for p in candidates],block_auto=False,note='No confidence penalty for absent comparable precedent.')

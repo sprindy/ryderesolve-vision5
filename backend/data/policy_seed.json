@@ -131,6 +131,18 @@
       "extraction_method": "Exact cancellation_policy object from supplied JSON",
       "source_file": "RydeResolve Sample Dataset — DISP-002 No-Show Charge Dispute (SG).md",
       "sha256": "a11fb5b04672c15b56be01a637726945be192e26e276e3367fe7dc7d80685167"
+    },
+    {
+      "source_id": "POLICY-V21",
+      "title": "Ryde Dispute Resolution Policy v2.1",
+      "url": null,
+      "audience": "both",
+      "source_kind": "official_internal_policy",
+      "retrieved_on": "2026-10-13",
+      "effective_from": "2026-01-01",
+      "extraction_method": "Structured clauses extracted from official policy document",
+      "source_file": "Document 2 — Ryde Dispute Resolution Policy v2.1 (Markdown).md",
+      "sha256": null
     }
   ],
   "clauses": [
@@ -542,6 +554,274 @@
         "fee_label": "cancellation",
         "fee_goes_to": "driver_compensation"
       }
+    },
+    {
+      "policy_id": "V21-ROUTE-PRINCIPLE",
+      "source_id": "POLICY-V21",
+      "topic": "long_route",
+      "statement": "Drivers are permitted to reroute from the GPS-recommended path in response to real-time traffic conditions, road closures, or congestion. However, the rider must be informed of any deviation.",
+      "parameters": {
+        "reroute_permitted": true,
+        "rider_notification_required": true
+      }
+    },
+    {
+      "policy_id": "V21-ROUTE-NOTIFY",
+      "source_id": "POLICY-V21",
+      "topic": "long_route",
+      "statement": "The driver MUST inform the rider of a route deviation via in-app chat or verbally (with trip call recording as evidence) before or at the point of deviation. A brief reason is sufficient.",
+      "parameters": {
+        "notification_channels": ["in_app_chat", "verbal_call_recording"],
+        "timing": "before_or_at_deviation",
+        "reason_required": true,
+        "reason_min_length": "brief"
+      }
+    },
+    {
+      "policy_id": "V21-ROUTE-REFUND-MATRIX",
+      "source_id": "POLICY-V21",
+      "topic": "long_route",
+      "statement": "Refund eligibility: no refund if rider informed and agrees regardless of deviation; partial refund of excess distance fare if rider not informed and deviation >1km; no refund if deviation <=1km (within tolerance); full refund of excess distance fare if driver reroutes without traffic justification and deviation >1km; no refund if no justification and deviation <=1km.",
+      "parameters": {
+        "tolerance_km": 1.0,
+        "refund_types": {
+          "rider_informed_agrees": "none",
+          "rider_not_informed_gt_1km": "partial_excess_distance",
+          "rider_not_informed_le_1km": "none",
+          "no_justification_gt_1km": "full_excess_distance",
+          "no_justification_le_1km": "none"
+        }
+      }
+    },
+    {
+      "policy_id": "V21-ROUTE-EVIDENCE",
+      "source_id": "POLICY-V21",
+      "topic": "long_route",
+      "statement": "Traffic justification is verified via historical traffic API data for the route segment at the trip time. Route deviation distance is calculated as actual_route_distance minus recommended_route_distance. Rider acknowledgment via in-app chat or call recording confirms the deviation is agreed.",
+      "parameters": {
+        "traffic_verification_method": "historical_traffic_api",
+        "deviation_formula": "actual_route_distance - recommended_route_distance",
+        "acknowledgment_evidence": ["in_app_chat", "call_recording"]
+      }
+    },
+    {
+      "policy_id": "V21-NOSHOW-WAIT",
+      "source_id": "POLICY-V21",
+      "topic": "no_show",
+      "statement": "The driver must wait at the pickup location for a free wait time of 5 minutes from the scheduled pickup time. After 5 minutes, the driver may cancel the trip as a rider no-show.",
+      "parameters": {
+        "free_wait_min": 5,
+        "wait_operator": ">",
+        "cancellation_permitted_after_min": 5,
+        "cancellation_reason": "rider_no_show"
+      }
+    },
+    {
+      "policy_id": "V21-NOSHOW-FEE",
+      "source_id": "POLICY-V21",
+      "topic": "no_show",
+      "statement": "A no-show cancellation fee of $5.00 is charged to the rider when the driver cancels after the free wait period. The cancellation fee is transferred to the driver as compensation for time and fuel.",
+      "parameters": {
+        "amount_sgd": 5.0,
+        "amount_role": "rider_charge",
+        "fee_label": "cancellation",
+        "fee_goes_to": "driver_compensation",
+        "trip_completed": false
+      }
+    },
+    {
+      "policy_id": "V21-NOSHOW-CONTACT",
+      "source_id": "POLICY-V21",
+      "topic": "no_show",
+      "statement": "Before cancelling for no-show, the driver MUST attempt to contact the rider with at least 1 in-app chat message AND at least 1 phone call via the in-app calling system. If the driver fails to meet both contact obligations, the cancellation fee is voided and the rider is not charged.",
+      "parameters": {
+        "min_chat_messages": 1,
+        "min_calls": 1,
+        "both_required": true,
+        "failure_consequence": "fee_voided"
+      }
+    },
+    {
+      "policy_id": "V21-DRIVER-NOSHOW",
+      "source_id": "POLICY-V21",
+      "topic": "cancellation",
+      "statement": "If the driver fails to arrive at the pickup location within a reasonable time (defined as scheduled pickup time + 5 minutes), the rider may cancel at no charge. If the driver fails to arrive and fails to attempt contact, the rider is eligible for a $5.00 goodwill credit.",
+      "parameters": {
+        "driver_late_threshold_min": 5,
+        "rider_cancel_free": true,
+        "goodwill_credit_sgd": 5.0,
+        "goodwill_credit_condition": "driver_no_arrival_and_no_contact"
+      }
+    },
+    {
+      "policy_id": "V21-REPEAT-NOSHOW",
+      "source_id": "POLICY-V21",
+      "topic": "no_show",
+      "statement": "If a rider accumulates 3 or more no-show cancellations within a 30-day rolling window, the rider's account is flagged for review. Flagged accounts are subject to mandatory upfront payment for future bookings and temporary suspension pending review by the Trust and Safety team.",
+      "parameters": {
+        "threshold_count": 3,
+        "rolling_window_days": 30,
+        "actions": ["mandatory_upfront_payment", "temporary_suspension"]
+      }
+    },
+    {
+      "policy_id": "V21-SURGE-QUOTE",
+      "source_id": "POLICY-V21",
+      "topic": "fare",
+      "statement": "The upfront quote presented to the rider at booking is binding at the surge multiplier in effect at quote time. The quoted fare includes base fare, distance fare, time fare, booking fee, and any applicable surge.",
+      "parameters": {
+        "binding_at": "quote_time",
+        "components": ["base_fare", "distance_fare", "time_fare", "booking_fee", "surge"]
+      }
+    },
+    {
+      "policy_id": "V21-SURGE-NOTIFY",
+      "source_id": "POLICY-V21",
+      "topic": "fare",
+      "statement": "If the surge multiplier increases between the time of quote and the time of trip start, the rider MUST be notified via an in-app notification before or at the point of pickup. The notification must state the new surge multiplier, the revised estimated fare, and an option to cancel without penalty.",
+      "parameters": {
+        "notification_required_when": "surge_increases",
+        "notification_channel": "in_app_notification",
+        "notification_must_include": ["new_surge_multiplier", "revised_fare", "cancel_without_penalty_option"]
+      }
+    },
+    {
+      "policy_id": "V21-SURGE-REFUND",
+      "source_id": "POLICY-V21",
+      "topic": "fare",
+      "statement": "If surge increases and rider is not notified, full refund of the surge differential (actual fare minus upfront quote). If surge decreases, lower fare applies automatically. If surge unchanged, quoted fare applies.",
+      "parameters": {
+        "surge_differential_formula": "actual_fare - upfront_quote",
+        "not_notified_refund": "full_surge_differential",
+        "surge_decreases": "lower_fare_applies",
+        "surge_unchanged": "quoted_fare_applies"
+      }
+    },
+    {
+      "policy_id": "V21-SURGE-EXEMPT",
+      "source_id": "POLICY-V21",
+      "topic": "fare",
+      "statement": "The booking fee is exempt from surge pricing and remains fixed regardless of multiplier. All other components (base fare, distance fare, time fare) are subject to the surge multiplier.",
+      "parameters": {
+        "surge_exempt": ["booking_fee"],
+        "surge_subject": ["base_fare", "distance_fare", "time_fare"]
+      }
+    },
+    {
+      "policy_id": "V21-DAMAGE-CLAIM",
+      "source_id": "POLICY-V21",
+      "topic": "property_damage",
+      "statement": "Drivers may file claims for cleaning or repair fees resulting from rider-caused damage to the vehicle, including spills, vomiting, food/beverage stains, physical damage to interior, and damage to exterior caused by rider behavior during boarding/alighting.",
+      "parameters": {
+        "claim_types": ["cleaning", "repair"],
+        "damage_examples": ["spills", "vomiting", "stains", "interior_damage", "exterior_damage"]
+      }
+    },
+    {
+      "policy_id": "V21-DAMAGE-EVIDENCE",
+      "source_id": "POLICY-V21",
+      "topic": "property_damage",
+      "statement": "Photo evidence must be submitted within 24 hours of trip completion. Photos must be automatically timestamped by the in-app camera, verifiable (taken through Ryde driver app, not external uploads), and damage must be linked to the specific trip via GPS telemetry and trip timestamp.",
+      "parameters": {
+        "submission_window_hours": 24,
+        "timestamp_required": true,
+        "must_use_in_app_camera": true,
+        "external_uploads_rejected": true,
+        "trip_linkage_required": true
+      }
+    },
+    {
+      "policy_id": "V21-DAMAGE-FEES",
+      "source_id": "POLICY-V21",
+      "topic": "property_damage",
+      "statement": "Cleaning fee up to $50.00 with photo evidence, no external quote required. Repair fee at cost of repair, requires written quote from certified workshop submitted within 7 days.",
+      "parameters": {
+        "cleaning_fee_max_sgd": 50.0,
+        "cleaning_evidence": "photo_only",
+        "repair_fee": "cost_of_repair",
+        "repair_quote_required": true,
+        "repair_quote_window_days": 7
+      }
+    },
+    {
+      "policy_id": "V21-DAMAGE-DISPUTE",
+      "source_id": "POLICY-V21",
+      "topic": "property_damage",
+      "statement": "If the rider disputes the damage claim, the dispute is routed to human review. The driver's photo evidence and the rider's account are both reviewed. If evidence is insufficient (no timestamp, external photo, or damage not linked to trip), the claim is rejected.",
+      "parameters": {
+        "dispute_routing": "human_review",
+        "rejection_conditions": ["no_timestamp", "external_photo", "damage_not_linked_to_trip"]
+      }
+    },
+    {
+      "policy_id": "V21-SAFETY-ESCALATE",
+      "source_id": "POLICY-V21",
+      "topic": "safety",
+      "statement": "Any dispute flagged as safety-related is automatically escalated to human review. Safety-related disputes include reckless driving, physical or verbal harassment, assault or threat of assault, inappropriate behavior, traffic accidents, and rider or driver feeling unsafe during the trip.",
+      "parameters": {
+        "auto_escalation": true,
+        "safety_categories": ["reckless_driving", "verbal_harassment", "physical_harassment", "assault", "inappropriate_behavior", "traffic_accident", "feeling_unsafe"]
+      }
+    },
+    {
+      "policy_id": "V21-SAFETY-AI-LIMITS",
+      "source_id": "POLICY-V21",
+      "topic": "safety",
+      "statement": "AI agents MAY gather evidence, summarize accounts, and prepare case files for human reviewers. AI agents CANNOT issue rulings, determine fault, or recommend resolutions on safety incidents. AI agents MUST flag any dispute that contains safety-related keywords or indicators for immediate human escalation, regardless of the dispute type selected by the filer.",
+      "parameters": {
+        "ai_can": ["gather_evidence", "summarize_accounts", "prepare_case_files"],
+        "ai_cannot": ["issue_rulings", "determine_fault", "recommend_resolutions"],
+        "must_flag_safety_keywords": true,
+        "override_filer_dispute_type": true
+      }
+    },
+    {
+      "policy_id": "V21-SAFETY-INTERIM",
+      "source_id": "POLICY-V21",
+      "topic": "safety",
+      "statement": "Upon escalation, the system may apply interim measures pending human review: temporary suspension of the accused party's account, prevention of new trip acceptance (for drivers) or booking (for riders). These measures are lifted if the human reviewer determines no safety violation occurred.",
+      "parameters": {
+        "interim_measures": ["account_suspension", "prevent_driver_accept", "prevent_rider_booking"],
+        "lifted_if_no_violation": true
+      }
+    },
+    {
+      "policy_id": "V21-THRESHOLD-MONETARY",
+      "source_id": "POLICY-V21",
+      "topic": "ruling_threshold",
+      "statement": "Disputes under $10: AI agent ruling is final at any confidence. Disputes $10-$50: AI agent ruling requires 80%+ confidence, else escalate to human review. Disputes above $50: always human review, AI agent prepares case file only.",
+      "parameters": {
+        "under_10_sgd": {"ruling_path": "ai_final", "confidence_required": "any"},
+        "ten_to_50_sgd": {"ruling_path": "ai_with_threshold", "confidence_required": 0.80, "below_threshold": "human_review"},
+        "above_50_sgd": {"ruling_path": "human_review", "confidence_required": "N/A"}
+      }
+    },
+    {
+      "policy_id": "V21-THRESHOLD-CATEGORY",
+      "source_id": "POLICY-V21",
+      "topic": "ruling_threshold",
+      "statement": "Safety incident: always human review. Fare dispute under $10: AI final. Fare dispute $10-$50: AI if confidence >=80%, else escalate. Fare dispute >$50: always human. Route deviation: AI if confidence >=80% and deviation <=2km, else escalate. Property damage cleaning <=$50: AI if photo verifiable. Property damage repair >$50: always human. No-show/cancellation: AI final (fee fixed at $5.00).",
+      "parameters": {
+        "safety": "always_human",
+        "fare_under_10": "ai_final",
+        "fare_10_to_50": "ai_if_80pct_else_human",
+        "fare_over_50": "always_human",
+        "route_deviation": "ai_if_80pct_and_le_2km_else_human",
+        "property_damage_cleaning_le_50": "ai_if_photo_verifiable",
+        "property_damage_repair_gt_50": "always_human",
+        "no_show_cancellation": "ai_final"
+      }
+    },
+    {
+      "policy_id": "V21-THRESHOLD-FRAUD",
+      "source_id": "POLICY-V21",
+      "topic": "ruling_threshold",
+      "statement": "Agent confidence is calculated based on evidence completeness, policy clarity, precedent alignment, and party credibility scores. If any party has a fraud flag >= 1, the confidence threshold is raised to 95% regardless of dispute value.",
+      "parameters": {
+        "confidence_factors": ["evidence_completeness", "policy_clarity", "precedent_alignment", "party_credibility"],
+        "fraud_flag_threshold": 1,
+        "fraud_confidence_override": 0.95
+      }
     }
   ],
   "conflicts": [
@@ -596,6 +876,36 @@
       ],
       "description": "Distance/duration fare description and fixed pickup/destination pricing require service context; no automatic reconciliation.",
       "status": "REVIEW_REQUIRED"
+    },
+    {
+      "conflict_id": "C006",
+      "conflict_type": "version_amount",
+      "policy_ids": [
+        "HC-RIDER-NOSHOW",
+        "V21-NOSHOW-FEE"
+      ],
+      "description": "Help Center says $6.61 cancellation fee; official policy v2.1 says $5.00. Official v2.1 (effective 2026-01-01) supersedes Help Center article.",
+      "status": "RESOLVED_V21_PREVAILS"
+    },
+    {
+      "conflict_id": "C007",
+      "conflict_type": "version_threshold",
+      "policy_ids": [
+        "HC-RIDER-NOSHOW",
+        "V21-NOSHOW-WAIT"
+      ],
+      "description": "Help Center says 3 min free wait; official policy v2.1 says 5 min free wait. Official v2.1 (effective 2026-01-01) supersedes Help Center article.",
+      "status": "RESOLVED_V21_PREVAILS"
+    },
+    {
+      "conflict_id": "C008",
+      "conflict_type": "contact_obligation",
+      "policy_ids": [
+        "HC-CONTACT-TRY",
+        "V21-NOSHOW-CONTACT"
+      ],
+      "description": "Help Center says attempt in-app messaging OR a call; official policy v2.1 requires at least 1 message AND 1 call (both mandatory). Official v2.1 is stricter.",
+      "status": "RESOLVED_V21_PREVAILS"
     }
   ]
 }

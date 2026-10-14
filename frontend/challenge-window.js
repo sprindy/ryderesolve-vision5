@@ -1,6 +1,7 @@
 /* Affected-party challenge window. Only the party adverse to the preliminary decision may act. */
 const challengeDrafts={};
-const DEMO_EXPORTS={'SIM-NS-004':'driver','SIM-NS-005':'rider'};
+let exportTrips=null;  // test cases that ship a verifiable server export
+api('/api/demo/trips').then(r=>{exportTrips=new Set(r.trips.filter(t=>t.has_export).map(t=>t.trip_id));if(current)render(current)}).catch(()=>{});
 const roleName=r=>r==='driver'?'Driver':r==='rider'?'Rider':'—';
 function challengeDraft(s=current){return challengeDrafts[s.case_id]??={statement:'',ground:'new_evidence',artifacts:[],uploadLabel:'',eids:'',pids:''}}
 
@@ -10,7 +11,7 @@ function finalBasisText(f){
   HUMAN_REVIEW:'A human reviewer recorded a cited decision.'}[f?.basis]||'';
 }
 function challengeSteps(s){
- const c=s.challenge||{},party=roleName(c.affected_party),reeval=s.phase==='debate';
+ const c=s.challenge||{},party=roleName(c.affected_party),reeval=s.stage==='challenge';
  const done=i=>s.status==='closed'||i<step?'done':i===step?'current':'';
  const step=s.status==='closed'?4:s.status==='human_review'||reeval?3:s.status==='challenge_window'?2:1;
  const labels=['Rider submits','Agents: preliminary decision',c.evidence_required?`${party} may challenge with evidence`:`${party} may accept or challenge`,s.status==='human_review'?'Human review':s.status==='closed'?(reeval?'Final decision after re-evaluation':'Final decision'):reeval?'Agents re-evaluate':'Final decision'];
@@ -20,7 +21,7 @@ function evidenceGapList(c){
  return (c.evidence_gaps||[]).map(reasonCard).join('');
 }
 function challengeForm(s){
- const c=s.challenge,d=challengeDraft(s),req=c.evidence_required,exportParty=DEMO_EXPORTS[s.trip_id];
+ const c=s.challenge,d=challengeDraft(s),req=c.evidence_required,hasExport=exportTrips?.has(s.trip_id);
  const grounds=req?[['new_evidence','New evidence (required for this decision)']]:[['new_evidence','New material evidence'],['factual_error','Factual error in the reviewed records'],['policy_error','Wrong policy or policy version'],['disagreement','Disagree without new facts (not admissible)']];
  return `<div class="challenge-form">
   <label for="challengeGround">Ground</label><select id="challengeGround" onchange="challengeDraft().ground=this.value">${grounds.map(([v,l])=>`<option value="${v}" ${d.ground===v?'selected':''}>${esc(l)}</option>`).join('')}</select>
@@ -29,7 +30,7 @@ function challengeForm(s){
   <div class="upload-section"><label for="challengeFile">Supporting document · JSON, max 128 KB${req?' · required':''}</label>
    <input id="challengeFile" type="file" accept=".json,application/json" onchange="uploadChallengeEvidence(this)">
    <p id="challengeUploadStatus" class="small" role="status" aria-live="polite">${esc(d.uploadLabel)}</p>
-   ${exportParty===window.ROLE?`<button type="button" class="case-id-link" onclick="downloadDemoExport()">Download demo server export for ${esc(s.trip_id)}</button>`:''}</div>
+   ${hasExport&&window.ROLE===c.affected_party?`<button type="button" class="case-id-link" onclick="downloadDemoExport()">Download demo server export for ${esc(s.trip_id)}</button>`:''}</div>
   ${req?'':`<details><summary>Cite reviewed records (factual or policy error)</summary><label for="challengeEids">Evidence IDs, comma separated</label><input id="challengeEids" value="${esc(d.eids)}" oninput="challengeDraft().eids=this.value"><label for="challengePids">Policy IDs, comma separated</label><input id="challengePids" value="${esc(d.pids)}" oninput="challengeDraft().pids=this.value" placeholder="e.g. HC-RIDER-NOSHOW"></details>`}
   <div class="actions"><button onclick="submitChallenge()" ${busy?'disabled':''}>Submit challenge</button><button class="alt" onclick="acceptDecision()" ${busy?'disabled':''}>Accept decision</button></div>
   ${s.last_challenge_gate&&!s.last_challenge_gate.admitted?`<div class="callout warning" role="alert"><b>Challenge not admitted.</b><br>${s.last_challenge_gate.errors.map(esc).join('<br>')}</div>`:''}
@@ -46,7 +47,7 @@ function challengePanel(s){
    :`<p class="small">Evidence is sufficient for a preliminary decision. The ${esc(party)} may accept it or challenge it with new evidence, a factual error or a policy error. Without a challenge it becomes final at the deadline.</p>`}
    ${pending&&mine?challengeForm(s):`<div class="waiting-note"><span class="status-dot"></span><b>Waiting for the ${esc(party)}</b><p>Only the ${esc(party)} can accept or challenge this decision. ${window.ROLE==='admin'?'Admin can advance the simulated clock.':''}</p>${window.ROLE!==c.affected_party&&window.ROLE!=='admin'?`<a class="case-id-link" href="./${c.affected_party}.html">Open ${esc(party)} view →</a>`:''}</div>`}
    <p class="tiny">Simulated 12-hour deadline: ${fmt(c.deadline)}</p>`;
- }else if(s.status==='processing'&&s.phase==='debate'){
+ }else if(s.status==='processing'&&s.stage==='challenge'){
   body='<div class="waiting-note" role="status" aria-live="polite"><span class="status-dot"></span><b>Agents are re-evaluating with the new evidence.</b><p>The Rider Advocate and Driver Advocate rebut each other with the corroborated records; the Judge then rules. No further party action is needed.</p></div>';
  }else if(s.status==='closed'){
   body=`<div class="callout success"><b>${s.final?.source==='agent_reassessed_after_challenge'?'Re-evaluated after the challenge.':s.final?.source==='affected_party_accepted'?`Accepted by the ${esc(party)}.`:'Challenge window closed.'}</b><br>${esc(finalBasisText(s.final))}</div>`;

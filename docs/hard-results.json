@@ -1,0 +1,1512 @@
+{
+ "mode": "deterministic",
+ "set": "hard",
+ "cases": 50,
+ "run_at": "2026-10-14T19:23:50+0800",
+ "outcome": {
+  "correct": 39,
+  "scored": 50,
+  "rate": 0.78
+ },
+ "liability": {
+  "correct": 28,
+  "scored": 42,
+  "rate": 0.667
+ },
+ "refund_amount": {
+  "correct": 14,
+  "scored": 14,
+  "rate": 1.0
+ },
+ "metrics": {
+  "outcome": {
+   "per_class": {
+    "refund": {
+     "precision": 0.667,
+     "recall": 0.857,
+     "f1": 0.75,
+     "support": 14,
+     "tp": 12,
+     "fp": 6,
+     "fn": 2
+    },
+    "charge_upheld": {
+     "precision": 0.737,
+     "recall": 0.7,
+     "f1": 0.718,
+     "support": 20,
+     "tp": 14,
+     "fp": 5,
+     "fn": 6
+    },
+    "human_review": {
+     "precision": 1.0,
+     "recall": 0.812,
+     "f1": 0.897,
+     "support": 16,
+     "tp": 13,
+     "fp": 0,
+     "fn": 3
+    }
+   },
+   "macro": {
+    "precision": 0.801,
+    "recall": 0.79,
+    "f1": 0.788
+   },
+   "accuracy": 0.78
+  },
+  "refund_decision": {
+   "per_class": {
+    "refund": {
+     "precision": 0.609,
+     "recall": 0.737,
+     "f1": 0.667,
+     "support": 19,
+     "tp": 14,
+     "fp": 9,
+     "fn": 5
+    },
+    "charge_upheld": {
+     "precision": 0.737,
+     "recall": 0.609,
+     "f1": 0.667,
+     "support": 23,
+     "tp": 14,
+     "fp": 5,
+     "fn": 9
+    }
+   },
+   "macro": {
+    "precision": 0.673,
+    "recall": 0.673,
+    "f1": 0.667
+   },
+   "accuracy": 0.667
+  },
+  "automation_rate": 0.74,
+  "automated_accuracy": 0.703,
+  "escalation_recall": 0.812,
+  "refund_sgd": {
+   "owed": 72.12,
+   "recommended": 66.6,
+   "overpaid": 5.68,
+   "underpaid": 11.2
+  }
+ },
+ "baselines": {
+  "always_refund": {
+   "outcome": {
+    "per_class": {
+     "refund": {
+      "precision": 0.28,
+      "recall": 1.0,
+      "f1": 0.438,
+      "support": 14,
+      "tp": 14,
+      "fp": 36,
+      "fn": 0
+     },
+     "charge_upheld": {
+      "precision": null,
+      "recall": 0.0,
+      "f1": null,
+      "support": 20,
+      "tp": 0,
+      "fp": 0,
+      "fn": 20
+     },
+     "human_review": {
+      "precision": null,
+      "recall": 0.0,
+      "f1": null,
+      "support": 16,
+      "tp": 0,
+      "fp": 0,
+      "fn": 16
+     }
+    },
+    "macro": {
+     "precision": 0.093,
+     "recall": 0.333,
+     "f1": 0.146
+    },
+    "accuracy": 0.28
+   },
+   "refund_decision": {
+    "per_class": {
+     "refund": {
+      "precision": 0.452,
+      "recall": 1.0,
+      "f1": 0.623,
+      "support": 19,
+      "tp": 19,
+      "fp": 23,
+      "fn": 0
+     },
+     "charge_upheld": {
+      "precision": null,
+      "recall": 0.0,
+      "f1": null,
+      "support": 23,
+      "tp": 0,
+      "fp": 0,
+      "fn": 23
+     }
+    },
+    "macro": {
+     "precision": 0.226,
+     "recall": 0.5,
+     "f1": 0.311
+    },
+    "accuracy": 0.452
+   },
+   "automation_rate": 1.0
+  },
+  "always_uphold_charge": {
+   "outcome": {
+    "per_class": {
+     "refund": {
+      "precision": null,
+      "recall": 0.0,
+      "f1": null,
+      "support": 14,
+      "tp": 0,
+      "fp": 0,
+      "fn": 14
+     },
+     "charge_upheld": {
+      "precision": 0.4,
+      "recall": 1.0,
+      "f1": 0.571,
+      "support": 20,
+      "tp": 20,
+      "fp": 30,
+      "fn": 0
+     },
+     "human_review": {
+      "precision": null,
+      "recall": 0.0,
+      "f1": null,
+      "support": 16,
+      "tp": 0,
+      "fp": 0,
+      "fn": 16
+     }
+    },
+    "macro": {
+     "precision": 0.133,
+     "recall": 0.333,
+     "f1": 0.19
+    },
+    "accuracy": 0.4
+   },
+   "refund_decision": {
+    "per_class": {
+     "refund": {
+      "precision": null,
+      "recall": 0.0,
+      "f1": null,
+      "support": 19,
+      "tp": 0,
+      "fp": 0,
+      "fn": 19
+     },
+     "charge_upheld": {
+      "precision": 0.548,
+      "recall": 1.0,
+      "f1": 0.708,
+      "support": 23,
+      "tp": 23,
+      "fp": 19,
+      "fn": 0
+     }
+    },
+    "macro": {
+     "precision": 0.274,
+     "recall": 0.5,
+     "f1": 0.354
+    },
+    "accuracy": 0.548
+   },
+   "automation_rate": 1.0
+  },
+  "all_to_human": {
+   "outcome": {
+    "per_class": {
+     "refund": {
+      "precision": null,
+      "recall": 0.0,
+      "f1": null,
+      "support": 14,
+      "tp": 0,
+      "fp": 0,
+      "fn": 14
+     },
+     "charge_upheld": {
+      "precision": null,
+      "recall": 0.0,
+      "f1": null,
+      "support": 20,
+      "tp": 0,
+      "fp": 0,
+      "fn": 20
+     },
+     "human_review": {
+      "precision": 0.32,
+      "recall": 1.0,
+      "f1": 0.485,
+      "support": 16,
+      "tp": 16,
+      "fp": 34,
+      "fn": 0
+     }
+    },
+    "macro": {
+     "precision": 0.107,
+     "recall": 0.333,
+     "f1": 0.162
+    },
+    "accuracy": 0.32
+   },
+   "refund_decision": {
+    "per_class": {
+     "refund": {
+      "precision": null,
+      "recall": 0.0,
+      "f1": null,
+      "support": 19,
+      "tp": 0,
+      "fp": 0,
+      "fn": 19
+     },
+     "charge_upheld": {
+      "precision": null,
+      "recall": 0.0,
+      "f1": null,
+      "support": 23,
+      "tp": 0,
+      "fp": 0,
+      "fn": 23
+     }
+    },
+    "macro": {
+     "precision": 0.0,
+     "recall": 0.0,
+     "f1": 0.0
+    },
+    "accuracy": 0.0
+   },
+   "automation_rate": 0.0
+  }
+ },
+ "by_category": {
+  "no_show": {
+   "outcome": {
+    "correct": 23,
+    "scored": 25,
+    "rate": 0.92
+   },
+   "liability": {
+    "correct": 20,
+    "scored": 20,
+    "rate": 1.0
+   }
+  },
+  "route_deviation": {
+   "outcome": {
+    "correct": 16,
+    "scored": 25,
+    "rate": 0.64
+   },
+   "liability": {
+    "correct": 8,
+    "scored": 22,
+    "rate": 0.364
+   }
+  }
+ },
+ "official_samples": [],
+ "wrongly_kept_charge": [
+  "HD-RD-020",
+  "HD-RD-021",
+  "HD-RD-022",
+  "HD-RD-036",
+  "HD-RD-043"
+ ],
+ "wrongly_refunded": [
+  "HD-RD-006",
+  "HD-RD-008",
+  "HD-RD-009",
+  "HD-RD-026",
+  "HD-RD-027",
+  "HD-RD-028",
+  "HD-RD-029",
+  "HD-RD-030",
+  "HD-RD-031"
+ ],
+ "confusion": {
+  "charge_upheld -> charge_upheld": 14,
+  "refund -> refund": 12,
+  "human_review -> charge_upheld": 3,
+  "human_review -> human_review": 13,
+  "charge_upheld -> refund": 6,
+  "refund -> charge_upheld": 2
+ },
+ "median_latency_ms": 2707,
+ "note": "Expected answers were written from Ryde policy v2.1 by the same team that wrote the rules engine, so deterministic scores measure how faithfully the engine implements the policy. LLM-mode scores are the meaningful measure of agent judgement.",
+ "results": [
+  {
+   "trip_id": "HD-NS-001",
+   "complexity": "simple",
+   "expected_liability": "charge_upheld",
+   "expected_path": "automated",
+   "expected_outcome": "charge_upheld",
+   "outcome": "charge_upheld",
+   "liability": "charge_upheld",
+   "status": "challenge_window",
+   "reason_codes": [
+    "DRIVER_PRESENT",
+    "WAIT_THRESHOLD_MET",
+    "CONTACT_ATTEMPTED"
+   ],
+   "confidence": 0.9518,
+   "expected_refund": 0,
+   "refund": 0.0,
+   "rounds": 2,
+   "human_reasons": [],
+   "latency_ms": 1680,
+   "outcome_match": true,
+   "liability_match": true,
+   "refund_match": null
+  },
+  {
+   "trip_id": "HD-NS-004",
+   "complexity": "simple",
+   "expected_liability": "charge_upheld",
+   "expected_path": "automated",
+   "expected_outcome": "charge_upheld",
+   "outcome": "charge_upheld",
+   "liability": "charge_upheld",
+   "status": "challenge_window",
+   "reason_codes": [
+    "DRIVER_PRESENT",
+    "WAIT_THRESHOLD_MET",
+    "CONTACT_ATTEMPTED"
+   ],
+   "confidence": 0.9548,
+   "expected_refund": 0,
+   "refund": 0.0,
+   "rounds": 2,
+   "human_reasons": [],
+   "latency_ms": 1820,
+   "outcome_match": true,
+   "liability_match": true,
+   "refund_match": null
+  },
+  {
+   "trip_id": "HD-NS-008",
+   "complexity": "simple",
+   "expected_liability": "charge_upheld",
+   "expected_path": "automated",
+   "expected_outcome": "charge_upheld",
+   "outcome": "charge_upheld",
+   "liability": "charge_upheld",
+   "status": "challenge_window",
+   "reason_codes": [
+    "DRIVER_PRESENT",
+    "WAIT_THRESHOLD_MET",
+    "CONTACT_ATTEMPTED"
+   ],
+   "confidence": 0.9477,
+   "expected_refund": 0,
+   "refund": 0.0,
+   "rounds": 2,
+   "human_reasons": [],
+   "latency_ms": 1854,
+   "outcome_match": true,
+   "liability_match": true,
+   "refund_match": null
+  },
+  {
+   "trip_id": "HD-NS-016",
+   "complexity": "simple",
+   "expected_liability": "refund",
+   "expected_path": "automated",
+   "expected_outcome": "refund",
+   "outcome": "refund",
+   "liability": "refund",
+   "status": "challenge_window",
+   "reason_codes": [
+    "THRESHOLD_NOT_MET"
+   ],
+   "confidence": 0.9572,
+   "expected_refund": 5.0,
+   "refund": 5.0,
+   "rounds": 2,
+   "human_reasons": [],
+   "latency_ms": 1504,
+   "outcome_match": true,
+   "liability_match": true,
+   "refund_match": true
+  },
+  {
+   "trip_id": "HD-NS-017",
+   "complexity": "simple",
+   "expected_liability": "refund",
+   "expected_path": "automated",
+   "expected_outcome": "refund",
+   "outcome": "refund",
+   "liability": "refund",
+   "status": "challenge_window",
+   "reason_codes": [
+    "DRIVER_LATE"
+   ],
+   "confidence": 0.9575,
+   "expected_refund": 5.0,
+   "refund": 5.0,
+   "rounds": 2,
+   "human_reasons": [],
+   "latency_ms": 1643,
+   "outcome_match": true,
+   "liability_match": true,
+   "refund_match": true
+  },
+  {
+   "trip_id": "HD-NS-018",
+   "complexity": "simple",
+   "expected_liability": "refund",
+   "expected_path": "automated",
+   "expected_outcome": "refund",
+   "outcome": "refund",
+   "liability": "refund",
+   "status": "challenge_window",
+   "reason_codes": [
+    "CONTACT_OBLIGATION_NOT_MET"
+   ],
+   "confidence": 0.9547,
+   "expected_refund": 5.0,
+   "refund": 5.0,
+   "rounds": 2,
+   "human_reasons": [],
+   "latency_ms": 1546,
+   "outcome_match": true,
+   "liability_match": true,
+   "refund_match": true
+  },
+  {
+   "trip_id": "HD-NS-022",
+   "complexity": "simple",
+   "expected_liability": "refund",
+   "expected_path": "automated",
+   "expected_outcome": "refund",
+   "outcome": "refund",
+   "liability": "refund",
+   "status": "challenge_window",
+   "reason_codes": [
+    "THRESHOLD_NOT_MET"
+   ],
+   "confidence": 0.9559,
+   "expected_refund": 5.0,
+   "refund": 5.0,
+   "rounds": 2,
+   "human_reasons": [],
+   "latency_ms": 1655,
+   "outcome_match": true,
+   "liability_match": true,
+   "refund_match": true
+  },
+  {
+   "trip_id": "HD-NS-023",
+   "complexity": "simple",
+   "expected_liability": "refund",
+   "expected_path": "automated",
+   "expected_outcome": "refund",
+   "outcome": "refund",
+   "liability": "refund",
+   "status": "challenge_window",
+   "reason_codes": [
+    "DRIVER_LATE"
+   ],
+   "confidence": 0.9589,
+   "expected_refund": 5.0,
+   "refund": 5.0,
+   "rounds": 2,
+   "human_reasons": [],
+   "latency_ms": 1775,
+   "outcome_match": true,
+   "liability_match": true,
+   "refund_match": true
+  },
+  {
+   "trip_id": "HD-NS-024",
+   "complexity": "simple",
+   "expected_liability": "refund",
+   "expected_path": "automated",
+   "expected_outcome": "refund",
+   "outcome": "refund",
+   "liability": "refund",
+   "status": "challenge_window",
+   "reason_codes": [
+    "CONTACT_OBLIGATION_NOT_MET"
+   ],
+   "confidence": 0.9516,
+   "expected_refund": 5.0,
+   "refund": 5.0,
+   "rounds": 2,
+   "human_reasons": [],
+   "latency_ms": 1677,
+   "outcome_match": true,
+   "liability_match": true,
+   "refund_match": true
+  },
+  {
+   "trip_id": "HD-NS-026",
+   "complexity": "complex",
+   "expected_liability": "charge_upheld",
+   "expected_path": "either",
+   "expected_outcome": "charge_upheld",
+   "outcome": "charge_upheld",
+   "liability": "charge_upheld",
+   "status": "challenge_window",
+   "reason_codes": [
+    "DRIVER_PRESENT",
+    "WAIT_THRESHOLD_MET",
+    "CONTACT_ATTEMPTED"
+   ],
+   "confidence": 0.956,
+   "expected_refund": 0,
+   "refund": 0.0,
+   "rounds": 2,
+   "human_reasons": [],
+   "latency_ms": 1420,
+   "outcome_match": true,
+   "liability_match": true,
+   "refund_match": null
+  },
+  {
+   "trip_id": "HD-NS-027",
+   "complexity": "complex",
+   "expected_liability": "charge_upheld",
+   "expected_path": "automated",
+   "expected_outcome": "charge_upheld",
+   "outcome": "charge_upheld",
+   "liability": "charge_upheld",
+   "status": "challenge_window",
+   "reason_codes": [
+    "DRIVER_PRESENT",
+    "WAIT_THRESHOLD_MET",
+    "CONTACT_ATTEMPTED"
+   ],
+   "confidence": 0.8292,
+   "expected_refund": 0,
+   "refund": 0.0,
+   "rounds": 2,
+   "human_reasons": [],
+   "latency_ms": 1887,
+   "outcome_match": true,
+   "liability_match": true,
+   "refund_match": null
+  },
+  {
+   "trip_id": "HD-NS-028",
+   "complexity": "complex",
+   "expected_liability": "charge_upheld",
+   "expected_path": "automated",
+   "expected_outcome": "charge_upheld",
+   "outcome": "charge_upheld",
+   "liability": "charge_upheld",
+   "status": "challenge_window",
+   "reason_codes": [
+    "DRIVER_PRESENT",
+    "WAIT_THRESHOLD_MET",
+    "CONTACT_ATTEMPTED"
+   ],
+   "confidence": 0.8258,
+   "expected_refund": 0,
+   "refund": 0.0,
+   "rounds": 2,
+   "human_reasons": [],
+   "latency_ms": 2226,
+   "outcome_match": true,
+   "liability_match": true,
+   "refund_match": null
+  },
+  {
+   "trip_id": "HD-NS-029",
+   "complexity": "complex",
+   "expected_liability": "charge_upheld",
+   "expected_path": "automated",
+   "expected_outcome": "charge_upheld",
+   "outcome": "charge_upheld",
+   "liability": "charge_upheld",
+   "status": "challenge_window",
+   "reason_codes": [
+    "DRIVER_PRESENT",
+    "WAIT_THRESHOLD_MET",
+    "CONTACT_ATTEMPTED"
+   ],
+   "confidence": 0.9585,
+   "expected_refund": 0,
+   "refund": 0.0,
+   "rounds": 2,
+   "human_reasons": [],
+   "latency_ms": 1845,
+   "outcome_match": true,
+   "liability_match": true,
+   "refund_match": null
+  },
+  {
+   "trip_id": "HD-NS-030",
+   "complexity": "complex",
+   "expected_liability": "charge_upheld",
+   "expected_path": "either",
+   "expected_outcome": "charge_upheld",
+   "outcome": "charge_upheld",
+   "liability": "charge_upheld",
+   "status": "challenge_window",
+   "reason_codes": [
+    "DRIVER_PRESENT",
+    "WAIT_THRESHOLD_MET",
+    "CONTACT_ATTEMPTED"
+   ],
+   "confidence": 0.9582,
+   "expected_refund": 0,
+   "refund": 0.0,
+   "rounds": 2,
+   "human_reasons": [],
+   "latency_ms": 1403,
+   "outcome_match": true,
+   "liability_match": true,
+   "refund_match": null
+  },
+  {
+   "trip_id": "HD-NS-031",
+   "complexity": "complex",
+   "expected_liability": "charge_upheld",
+   "expected_path": "automated",
+   "expected_outcome": "charge_upheld",
+   "outcome": "charge_upheld",
+   "liability": "charge_upheld",
+   "status": "challenge_window",
+   "reason_codes": [
+    "DRIVER_PRESENT",
+    "WAIT_THRESHOLD_MET",
+    "CONTACT_ATTEMPTED"
+   ],
+   "confidence": 0.8241,
+   "expected_refund": 0,
+   "refund": 0.0,
+   "rounds": 2,
+   "human_reasons": [],
+   "latency_ms": 1964,
+   "outcome_match": true,
+   "liability_match": true,
+   "refund_match": null
+  },
+  {
+   "trip_id": "HD-NS-036",
+   "complexity": "complex",
+   "expected_liability": "refund",
+   "expected_path": "automated",
+   "expected_outcome": "refund",
+   "outcome": "refund",
+   "liability": "refund",
+   "status": "challenge_window",
+   "reason_codes": [
+    "DRIVER_NOT_AT_PICKUP"
+   ],
+   "confidence": 0.9597,
+   "expected_refund": 5.0,
+   "refund": 5.0,
+   "rounds": 2,
+   "human_reasons": [],
+   "latency_ms": 1769,
+   "outcome_match": true,
+   "liability_match": true,
+   "refund_match": true
+  },
+  {
+   "trip_id": "HD-NS-037",
+   "complexity": "complex",
+   "expected_liability": "refund",
+   "expected_path": "automated",
+   "expected_outcome": "refund",
+   "outcome": "refund",
+   "liability": "refund",
+   "status": "challenge_window",
+   "reason_codes": [
+    "DRIVER_NOT_AT_PICKUP"
+   ],
+   "confidence": 0.957,
+   "expected_refund": 5.0,
+   "refund": 5.0,
+   "rounds": 2,
+   "human_reasons": [],
+   "latency_ms": 1639,
+   "outcome_match": true,
+   "liability_match": true,
+   "refund_match": true
+  },
+  {
+   "trip_id": "HD-NS-038",
+   "complexity": "complex",
+   "expected_liability": "refund",
+   "expected_path": "automated",
+   "expected_outcome": "refund",
+   "outcome": "refund",
+   "liability": "refund",
+   "status": "challenge_window",
+   "reason_codes": [
+    "THRESHOLD_NOT_MET"
+   ],
+   "confidence": 0.9595,
+   "expected_refund": 5.0,
+   "refund": 5.0,
+   "rounds": 2,
+   "human_reasons": [],
+   "latency_ms": 1443,
+   "outcome_match": true,
+   "liability_match": true,
+   "refund_match": true
+  },
+  {
+   "trip_id": "HD-NS-042",
+   "complexity": "complex",
+   "expected_liability": "refund",
+   "expected_path": "automated",
+   "expected_outcome": "refund",
+   "outcome": "refund",
+   "liability": "refund",
+   "status": "challenge_window",
+   "reason_codes": [
+    "DRIVER_NOT_AT_PICKUP"
+   ],
+   "confidence": 0.9613,
+   "expected_refund": 5.0,
+   "refund": 5.0,
+   "rounds": 2,
+   "human_reasons": [],
+   "latency_ms": 1776,
+   "outcome_match": true,
+   "liability_match": true,
+   "refund_match": true
+  },
+  {
+   "trip_id": "HD-NS-044",
+   "complexity": "complex",
+   "expected_liability": "refund",
+   "expected_path": "automated",
+   "expected_outcome": "refund",
+   "outcome": "refund",
+   "liability": "refund",
+   "status": "challenge_window",
+   "reason_codes": [
+    "THRESHOLD_NOT_MET"
+   ],
+   "confidence": 0.9567,
+   "expected_refund": 5.0,
+   "refund": 5.0,
+   "rounds": 2,
+   "human_reasons": [],
+   "latency_ms": 3166,
+   "outcome_match": true,
+   "liability_match": true,
+   "refund_match": true
+  },
+  {
+   "trip_id": "HD-NS-046",
+   "complexity": "complex",
+   "expected_liability": "human_review",
+   "expected_path": "human_review",
+   "expected_outcome": "human_review",
+   "outcome": "charge_upheld",
+   "liability": "charge_upheld",
+   "status": "challenge_window",
+   "reason_codes": [
+    "DRIVER_PRESENT",
+    "WAIT_THRESHOLD_MET",
+    "CONTACT_ATTEMPTED"
+   ],
+   "confidence": 0.9611,
+   "expected_refund": 0,
+   "refund": 0.0,
+   "rounds": 2,
+   "human_reasons": [],
+   "latency_ms": 6754,
+   "outcome_match": false,
+   "liability_match": null,
+   "refund_match": null
+  },
+  {
+   "trip_id": "HD-NS-047",
+   "complexity": "complex",
+   "expected_liability": "human_review",
+   "expected_path": "human_review",
+   "expected_outcome": "human_review",
+   "outcome": "human_review",
+   "liability": "undetermined",
+   "status": "human_review",
+   "reason_codes": [
+    "EVIDENCE_INTEGRITY"
+   ],
+   "confidence": 0.4112,
+   "expected_refund": 0,
+   "refund": null,
+   "rounds": 2,
+   "human_reasons": [
+    "EVIDENCE_INTEGRITY",
+    "HISTORY_REQUIRES_CORROBORATION"
+   ],
+   "latency_ms": 3227,
+   "outcome_match": true,
+   "liability_match": null,
+   "refund_match": null
+  },
+  {
+   "trip_id": "HD-NS-048",
+   "complexity": "complex",
+   "expected_liability": "human_review",
+   "expected_path": "human_review",
+   "expected_outcome": "human_review",
+   "outcome": "human_review",
+   "liability": "undetermined",
+   "status": "human_review",
+   "reason_codes": [
+    "INSUFFICIENT_EVIDENCE"
+   ],
+   "confidence": 0.7561,
+   "expected_refund": 0,
+   "refund": null,
+   "rounds": 2,
+   "human_reasons": [
+    "MISSING_COMMUNICATIONS"
+   ],
+   "latency_ms": 2804,
+   "outcome_match": true,
+   "liability_match": null,
+   "refund_match": null
+  },
+  {
+   "trip_id": "HD-NS-049",
+   "complexity": "complex",
+   "expected_liability": "human_review",
+   "expected_path": "human_review",
+   "expected_outcome": "human_review",
+   "outcome": "charge_upheld",
+   "liability": "charge_upheld",
+   "status": "challenge_window",
+   "reason_codes": [
+    "DRIVER_PRESENT",
+    "WAIT_THRESHOLD_MET",
+    "CONTACT_ATTEMPTED"
+   ],
+   "confidence": 0.9613,
+   "expected_refund": 0,
+   "refund": 0.0,
+   "rounds": 2,
+   "human_reasons": [],
+   "latency_ms": 2428,
+   "outcome_match": false,
+   "liability_match": null,
+   "refund_match": null
+  },
+  {
+   "trip_id": "HD-NS-050",
+   "complexity": "complex",
+   "expected_liability": "human_review",
+   "expected_path": "human_review",
+   "expected_outcome": "human_review",
+   "outcome": "human_review",
+   "liability": "undetermined",
+   "status": "human_review",
+   "reason_codes": [
+    "EVIDENCE_INTEGRITY"
+   ],
+   "confidence": 0.4113,
+   "expected_refund": 0,
+   "refund": null,
+   "rounds": 2,
+   "human_reasons": [
+    "EVIDENCE_INTEGRITY",
+    "HISTORY_REQUIRES_CORROBORATION"
+   ],
+   "latency_ms": 2707,
+   "outcome_match": true,
+   "liability_match": null,
+   "refund_match": null
+  },
+  {
+   "trip_id": "HD-RD-001",
+   "complexity": "simple",
+   "expected_liability": "charge_upheld",
+   "expected_path": "automated",
+   "expected_outcome": "charge_upheld",
+   "outcome": "charge_upheld",
+   "liability": "charge_upheld",
+   "status": "challenge_window",
+   "reason_codes": [
+    "FOLLOWED_RECOMMENDED_ROUTE"
+   ],
+   "confidence": 0.9613,
+   "expected_refund": 0,
+   "refund": 0.0,
+   "rounds": 3,
+   "human_reasons": [],
+   "latency_ms": 3322,
+   "outcome_match": true,
+   "liability_match": true,
+   "refund_match": null
+  },
+  {
+   "trip_id": "HD-RD-003",
+   "complexity": "simple",
+   "expected_liability": "charge_upheld",
+   "expected_path": "automated",
+   "expected_outcome": "charge_upheld",
+   "outcome": "charge_upheld",
+   "liability": "charge_upheld",
+   "status": "challenge_window",
+   "reason_codes": [
+    "FOLLOWED_RECOMMENDED_ROUTE"
+   ],
+   "confidence": 0.9613,
+   "expected_refund": 0,
+   "refund": 0.0,
+   "rounds": 3,
+   "human_reasons": [],
+   "latency_ms": 3779,
+   "outcome_match": true,
+   "liability_match": true,
+   "refund_match": null
+  },
+  {
+   "trip_id": "HD-RD-006",
+   "complexity": "simple",
+   "expected_liability": "charge_upheld",
+   "expected_path": "human_review",
+   "expected_outcome": "human_review",
+   "outcome": "human_review",
+   "liability": "refund",
+   "status": "human_review",
+   "reason_codes": [
+    "REROUTE_NOT_NOTIFIED"
+   ],
+   "confidence": 0.9605,
+   "expected_refund": 0,
+   "refund": 2.56,
+   "rounds": 3,
+   "human_reasons": [
+    "ROUTE_DEVIATION_ABOVE_AI_LIMIT"
+   ],
+   "latency_ms": 3318,
+   "outcome_match": true,
+   "liability_match": false,
+   "refund_match": null
+  },
+  {
+   "trip_id": "HD-RD-008",
+   "complexity": "simple",
+   "expected_liability": "charge_upheld",
+   "expected_path": "automated",
+   "expected_outcome": "charge_upheld",
+   "outcome": "refund",
+   "liability": "refund",
+   "status": "challenge_window",
+   "reason_codes": [
+    "REROUTE_NOT_NOTIFIED"
+   ],
+   "confidence": 0.9525,
+   "expected_refund": 0,
+   "refund": 1.6,
+   "rounds": 3,
+   "human_reasons": [],
+   "latency_ms": 4016,
+   "outcome_match": false,
+   "liability_match": false,
+   "refund_match": null
+  },
+  {
+   "trip_id": "HD-RD-009",
+   "complexity": "simple",
+   "expected_liability": "charge_upheld",
+   "expected_path": "automated",
+   "expected_outcome": "charge_upheld",
+   "outcome": "refund",
+   "liability": "refund",
+   "status": "challenge_window",
+   "reason_codes": [
+    "REROUTE_NOT_NOTIFIED"
+   ],
+   "confidence": 0.952,
+   "expected_refund": 0,
+   "refund": 1.52,
+   "rounds": 3,
+   "human_reasons": [],
+   "latency_ms": 3112,
+   "outcome_match": false,
+   "liability_match": false,
+   "refund_match": null
+  },
+  {
+   "trip_id": "HD-RD-011",
+   "complexity": "simple",
+   "expected_liability": "charge_upheld",
+   "expected_path": "automated",
+   "expected_outcome": "charge_upheld",
+   "outcome": "charge_upheld",
+   "liability": "charge_upheld",
+   "status": "challenge_window",
+   "reason_codes": [
+    "WITHIN_ROUTE_TOLERANCE"
+   ],
+   "confidence": 0.957,
+   "expected_refund": 0,
+   "refund": 0.0,
+   "rounds": 3,
+   "human_reasons": [],
+   "latency_ms": 2955,
+   "outcome_match": true,
+   "liability_match": true,
+   "refund_match": null
+  },
+  {
+   "trip_id": "HD-RD-014",
+   "complexity": "simple",
+   "expected_liability": "charge_upheld",
+   "expected_path": "automated",
+   "expected_outcome": "charge_upheld",
+   "outcome": "charge_upheld",
+   "liability": "charge_upheld",
+   "status": "challenge_window",
+   "reason_codes": [
+    "WITHIN_ROUTE_TOLERANCE"
+   ],
+   "confidence": 0.9538,
+   "expected_refund": 0,
+   "refund": 0.0,
+   "rounds": 3,
+   "human_reasons": [],
+   "latency_ms": 2685,
+   "outcome_match": true,
+   "liability_match": true,
+   "refund_match": null
+  },
+  {
+   "trip_id": "HD-RD-016",
+   "complexity": "simple",
+   "expected_liability": "refund",
+   "expected_path": "human_review",
+   "expected_outcome": "human_review",
+   "outcome": "human_review",
+   "liability": "refund",
+   "status": "human_review",
+   "reason_codes": [
+    "REROUTE_NOT_NOTIFIED"
+   ],
+   "confidence": 0.952,
+   "expected_refund": 2.4,
+   "refund": 2.4,
+   "rounds": 3,
+   "human_reasons": [
+    "ROUTE_DEVIATION_ABOVE_AI_LIMIT"
+   ],
+   "latency_ms": 3129,
+   "outcome_match": true,
+   "liability_match": true,
+   "refund_match": true
+  },
+  {
+   "trip_id": "HD-RD-019",
+   "complexity": "simple",
+   "expected_liability": "refund",
+   "expected_path": "automated",
+   "expected_outcome": "refund",
+   "outcome": "refund",
+   "liability": "refund",
+   "status": "challenge_window",
+   "reason_codes": [
+    "REROUTE_NOT_NOTIFIED"
+   ],
+   "confidence": 0.9497,
+   "expected_refund": 1.36,
+   "refund": 1.36,
+   "rounds": 3,
+   "human_reasons": [],
+   "latency_ms": 2891,
+   "outcome_match": true,
+   "liability_match": true,
+   "refund_match": true
+  },
+  {
+   "trip_id": "HD-RD-020",
+   "complexity": "simple",
+   "expected_liability": "refund",
+   "expected_path": "automated",
+   "expected_outcome": "refund",
+   "outcome": "charge_upheld",
+   "liability": "charge_upheld",
+   "status": "challenge_window",
+   "reason_codes": [
+    "RIDER_INFORMED_OF_REROUTE"
+   ],
+   "confidence": 0.9555,
+   "expected_refund": 1.36,
+   "refund": 0.0,
+   "rounds": 3,
+   "human_reasons": [],
+   "latency_ms": 3219,
+   "outcome_match": false,
+   "liability_match": false,
+   "refund_match": null
+  },
+  {
+   "trip_id": "HD-RD-021",
+   "complexity": "simple",
+   "expected_liability": "refund",
+   "expected_path": "automated",
+   "expected_outcome": "refund",
+   "outcome": "charge_upheld",
+   "liability": "charge_upheld",
+   "status": "challenge_window",
+   "reason_codes": [
+    "RIDER_INFORMED_OF_REROUTE"
+   ],
+   "confidence": 0.957,
+   "expected_refund": 1.6,
+   "refund": 0.0,
+   "rounds": 3,
+   "human_reasons": [],
+   "latency_ms": 2774,
+   "outcome_match": false,
+   "liability_match": false,
+   "refund_match": null
+  },
+  {
+   "trip_id": "HD-RD-022",
+   "complexity": "simple",
+   "expected_liability": "refund",
+   "expected_path": "human_review",
+   "expected_outcome": "human_review",
+   "outcome": "human_review",
+   "liability": "charge_upheld",
+   "status": "human_review",
+   "reason_codes": [
+    "RIDER_INFORMED_OF_REROUTE"
+   ],
+   "confidence": 0.9574,
+   "expected_refund": 2.64,
+   "refund": 0.0,
+   "rounds": 3,
+   "human_reasons": [
+    "ROUTE_DEVIATION_ABOVE_AI_LIMIT"
+   ],
+   "latency_ms": 2710,
+   "outcome_match": true,
+   "liability_match": false,
+   "refund_match": null
+  },
+  {
+   "trip_id": "HD-RD-026",
+   "complexity": "complex",
+   "expected_liability": "charge_upheld",
+   "expected_path": "automated",
+   "expected_outcome": "charge_upheld",
+   "outcome": "refund",
+   "liability": "refund",
+   "status": "challenge_window",
+   "reason_codes": [
+    "REROUTE_NOT_NOTIFIED"
+   ],
+   "confidence": 0.9505,
+   "expected_refund": 0,
+   "refund": null,
+   "rounds": 3,
+   "human_reasons": [],
+   "latency_ms": 2929,
+   "outcome_match": false,
+   "liability_match": false,
+   "refund_match": null
+  },
+  {
+   "trip_id": "HD-RD-027",
+   "complexity": "complex",
+   "expected_liability": "charge_upheld",
+   "expected_path": "human_review",
+   "expected_outcome": "human_review",
+   "outcome": "human_review",
+   "liability": "refund",
+   "status": "human_review",
+   "reason_codes": [
+    "REROUTE_NOT_NOTIFIED"
+   ],
+   "confidence": 0.9611,
+   "expected_refund": 0,
+   "refund": null,
+   "rounds": 3,
+   "human_reasons": [
+    "ROUTE_DEVIATION_ABOVE_AI_LIMIT"
+   ],
+   "latency_ms": 2980,
+   "outcome_match": true,
+   "liability_match": false,
+   "refund_match": null
+  },
+  {
+   "trip_id": "HD-RD-028",
+   "complexity": "complex",
+   "expected_liability": "charge_upheld",
+   "expected_path": "automated",
+   "expected_outcome": "charge_upheld",
+   "outcome": "refund",
+   "liability": "refund",
+   "status": "challenge_window",
+   "reason_codes": [
+    "REROUTE_NOT_NOTIFIED"
+   ],
+   "confidence": 0.9514,
+   "expected_refund": 0,
+   "refund": null,
+   "rounds": 3,
+   "human_reasons": [],
+   "latency_ms": 2807,
+   "outcome_match": false,
+   "liability_match": false,
+   "refund_match": null
+  },
+  {
+   "trip_id": "HD-RD-029",
+   "complexity": "complex",
+   "expected_liability": "charge_upheld",
+   "expected_path": "human_review",
+   "expected_outcome": "human_review",
+   "outcome": "human_review",
+   "liability": "refund",
+   "status": "human_review",
+   "reason_codes": [
+    "REROUTE_NOT_NOTIFIED"
+   ],
+   "confidence": 0.9518,
+   "expected_refund": 0,
+   "refund": null,
+   "rounds": 3,
+   "human_reasons": [
+    "ROUTE_DEVIATION_ABOVE_AI_LIMIT"
+   ],
+   "latency_ms": 2762,
+   "outcome_match": true,
+   "liability_match": false,
+   "refund_match": null
+  },
+  {
+   "trip_id": "HD-RD-030",
+   "complexity": "complex",
+   "expected_liability": "charge_upheld",
+   "expected_path": "automated",
+   "expected_outcome": "charge_upheld",
+   "outcome": "refund",
+   "liability": "refund",
+   "status": "challenge_window",
+   "reason_codes": [
+    "REROUTE_NOT_NOTIFIED"
+   ],
+   "confidence": 0.9613,
+   "expected_refund": 0,
+   "refund": null,
+   "rounds": 3,
+   "human_reasons": [],
+   "latency_ms": 2804,
+   "outcome_match": false,
+   "liability_match": false,
+   "refund_match": null
+  },
+  {
+   "trip_id": "HD-RD-031",
+   "complexity": "complex",
+   "expected_liability": "charge_upheld",
+   "expected_path": "automated",
+   "expected_outcome": "charge_upheld",
+   "outcome": "refund",
+   "liability": "refund",
+   "status": "challenge_window",
+   "reason_codes": [
+    "REROUTE_NOT_NOTIFIED"
+   ],
+   "confidence": 0.9568,
+   "expected_refund": 0,
+   "refund": null,
+   "rounds": 3,
+   "human_reasons": [],
+   "latency_ms": 2719,
+   "outcome_match": false,
+   "liability_match": false,
+   "refund_match": null
+  },
+  {
+   "trip_id": "HD-RD-032",
+   "complexity": "complex",
+   "expected_liability": "charge_upheld",
+   "expected_path": "automated",
+   "expected_outcome": "charge_upheld",
+   "outcome": "charge_upheld",
+   "liability": "charge_upheld",
+   "status": "challenge_window",
+   "reason_codes": [
+    "WITHIN_ROUTE_TOLERANCE"
+   ],
+   "confidence": 0.9525,
+   "expected_refund": 0,
+   "refund": 0.0,
+   "rounds": 3,
+   "human_reasons": [],
+   "latency_ms": 2655,
+   "outcome_match": true,
+   "liability_match": true,
+   "refund_match": null
+  },
+  {
+   "trip_id": "HD-RD-036",
+   "complexity": "complex",
+   "expected_liability": "refund",
+   "expected_path": "human_review",
+   "expected_outcome": "human_review",
+   "outcome": "human_review",
+   "liability": "charge_upheld",
+   "status": "human_review",
+   "reason_codes": [
+    "RIDER_INFORMED_OF_REROUTE"
+   ],
+   "confidence": 0.9565,
+   "expected_refund": 3.52,
+   "refund": 0.0,
+   "rounds": 3,
+   "human_reasons": [
+    "ROUTE_DEVIATION_ABOVE_AI_LIMIT"
+   ],
+   "latency_ms": 2728,
+   "outcome_match": true,
+   "liability_match": false,
+   "refund_match": null
+  },
+  {
+   "trip_id": "HD-RD-040",
+   "complexity": "complex",
+   "expected_liability": "refund",
+   "expected_path": "human_review",
+   "expected_outcome": "human_review",
+   "outcome": "human_review",
+   "liability": "refund",
+   "status": "human_review",
+   "reason_codes": [
+    "UNJUSTIFIED_DEVIATION"
+   ],
+   "confidence": 0.9525,
+   "expected_refund": 2.16,
+   "refund": 2.16,
+   "rounds": 3,
+   "human_reasons": [
+    "ROUTE_DEVIATION_ABOVE_AI_LIMIT"
+   ],
+   "latency_ms": 2585,
+   "outcome_match": true,
+   "liability_match": true,
+   "refund_match": true
+  },
+  {
+   "trip_id": "HD-RD-043",
+   "complexity": "complex",
+   "expected_liability": "refund",
+   "expected_path": "human_review",
+   "expected_outcome": "human_review",
+   "outcome": "human_review",
+   "liability": "charge_upheld",
+   "status": "human_review",
+   "reason_codes": [
+    "RIDER_INFORMED_OF_REROUTE"
+   ],
+   "confidence": 0.9519,
+   "expected_refund": 2.08,
+   "refund": 0.0,
+   "rounds": 3,
+   "human_reasons": [
+    "ROUTE_DEVIATION_ABOVE_AI_LIMIT"
+   ],
+   "latency_ms": 2630,
+   "outcome_match": true,
+   "liability_match": false,
+   "refund_match": null
+  },
+  {
+   "trip_id": "HD-RD-046",
+   "complexity": "complex",
+   "expected_liability": "human_review",
+   "expected_path": "human_review",
+   "expected_outcome": "human_review",
+   "outcome": "human_review",
+   "liability": "undetermined",
+   "status": "human_review",
+   "reason_codes": [
+    "INSUFFICIENT_EVIDENCE"
+   ],
+   "confidence": 0.6446,
+   "expected_refund": 0,
+   "refund": null,
+   "rounds": 2,
+   "human_reasons": [
+    "HISTORY_REQUIRES_CORROBORATION",
+    "MISSING_NAVIGATION_EVIDENCE"
+   ],
+   "latency_ms": 1548,
+   "outcome_match": true,
+   "liability_match": null,
+   "refund_match": null
+  },
+  {
+   "trip_id": "HD-RD-048",
+   "complexity": "complex",
+   "expected_liability": "human_review",
+   "expected_path": "human_review",
+   "expected_outcome": "human_review",
+   "outcome": "human_review",
+   "liability": "undetermined",
+   "status": "human_review",
+   "reason_codes": [
+    "EVIDENCE_INTEGRITY"
+   ],
+   "confidence": 0.757,
+   "expected_refund": 0,
+   "refund": null,
+   "rounds": 3,
+   "human_reasons": [
+    "ROUTE_DEVIATION_ABOVE_AI_LIMIT",
+    "ROUTE_FARE_CONFLICT"
+   ],
+   "latency_ms": 2727,
+   "outcome_match": true,
+   "liability_match": null,
+   "refund_match": null
+  },
+  {
+   "trip_id": "HD-RD-050",
+   "complexity": "complex",
+   "expected_liability": "human_review",
+   "expected_path": "human_review",
+   "expected_outcome": "human_review",
+   "outcome": "charge_upheld",
+   "liability": "charge_upheld",
+   "status": "challenge_window",
+   "reason_codes": [
+    "FOLLOWED_RECOMMENDED_ROUTE"
+   ],
+   "confidence": 0.9506,
+   "expected_refund": 0,
+   "refund": 0.0,
+   "rounds": 3,
+   "human_reasons": [],
+   "latency_ms": 2746,
+   "outcome_match": false,
+   "liability_match": null,
+   "refund_match": null
+  }
+ ]
+}

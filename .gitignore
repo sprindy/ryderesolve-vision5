@@ -1,35 +1,12 @@
-# Claude
-.claude/
-
-# Python
 __pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-env/
-venv/
+*.pyc
 .venv/
-*.egg-info/
-dist/
-build/
 backend/.env
-
-# Database
 *.db
 *.sqlite3
 *.sqlite
 *.sqlite-shm
 *.sqlite-wal
-
-# Node
-node_modules/
-npm-debug.log*
-
-# Environment
-.env
-.env.local
-
-# OS
-.DS_Store
-Thumbs.db
+llm-proxy/proxy-config.json
+llm-proxy/node_modules/
+backend/ryde.db

@@ -8,7 +8,7 @@ from fastapi import BackgroundTasks, FastAPI, HTTPException, Header
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
-from . import store, engines, simulation, evidence_intake, settlement,knowledge,demo_auth
+from . import store, engines, simulation, evidence_intake, settlement,knowledge,demo_auth,official_samples
 from .contracts import ChallengeRequest, HumanReview, CaseRequest, EvidenceUpload
 from .workflow import GRAPH, run, start_reassessment
 
@@ -45,7 +45,7 @@ async def lifespan(app):
     except asyncio.CancelledError: pass
 
 app=FastAPI(title='RydeResolve · LangGraph Final Demo',lifespan=lifespan)
-app.add_middleware(CORSMiddleware,allow_origins=['http://127.0.0.1:5173','http://localhost:5173','https://sprindy.github.io','https://ryderesolve-vision5.onrender.com','https://euculc-etsxek-8080.app.cloudstudio.work'],allow_methods=['GET','POST'],allow_headers=['Content-Type','X-Admin-Token','Authorization'])
+app.add_middleware(CORSMiddleware,allow_origins=['http://127.0.0.1:5173','http://localhost:5173'],allow_methods=['GET','POST'],allow_headers=['Content-Type','X-Admin-Token','Authorization'])
 @app.middleware('http')
 async def demo_identity(request,call_next):
     path=request.url.path
@@ -85,25 +85,29 @@ def agent_registry():
 @app.get('/api/health')
 def health():
     from importlib.metadata import version
-    return dict(ok=True,version='vision5-challenge-3',workflow='compiled LangGraph StateGraph',langgraph_version=version('langgraph'),mode=os.getenv('AGENT_MODE','deterministic'),database='SQLite demo repository',official_sample='DISP-002')
+    return dict(ok=True,version='vision5-v21-4',policy='Ryde Dispute Resolution Policy v2.1',benchmark_cases=len(simulation.benchmark_cases()),hard_variants=len(simulation.hard_cases()),evidence_exports=len(simulation.supplements()),workflow='compiled LangGraph StateGraph',langgraph_version=version('langgraph'),mode=os.getenv('AGENT_MODE','deterministic'),database='SQLite demo repository',official_samples=list(official_samples.SAMPLES))
 
 def require_rider():
     if demo_auth.current()['role']!='rider':raise HTTPException(403,'Only the Rider can submit a dispute')
 
-def create(scope='sample'):
+def create(scope='sample',dispute_id='DISP-002'):
     require_rider()
     if scope not in ('sample','production'): raise HTTPException(400,'scope must be sample or production')
-    s=dict(case_id=store.next_case_id(),official_dispute_id='DISP-002',trip_id='TRIP-2026-09945',data_kind='official',category='no_show',title='Official DISP-002 no-show dispute',status='submitted',current_node='submitted',policy_scope=scope,round_no=0,rounds=[],bundle={},arguments={},created_at=store.iso())
+    sample=official_samples.SAMPLES.get(dispute_id)
+    if not sample: raise HTTPException(422,'Unknown official sample')
+    # DISP-002 keeps its own sample policy; DISP-001 is decided under policy v2.1.
+    policy_scope=scope if dispute_id=='DISP-002' or scope=='production' else sample['policy_scope']
+    s=dict(case_id=store.next_case_id(),official_dispute_id=dispute_id,trip_id=sample['trip_id'],data_kind='official',category=sample['category'],title=sample['title'],status='submitted',current_node='submitted',policy_scope=policy_scope,round_no=0,rounds=[],bundle={},arguments={},created_at=store.iso())
     s['session_id']=demo_auth.current()['session_id']
-    store.save(s); store.event(s['case_id'],'submitted','lifecycle',{'official_dispute_id':'DISP-002','policy_scope':scope})
+    store.save(s); store.event(s['case_id'],'submitted','lifecycle',{'official_dispute_id':dispute_id,'policy_scope':policy_scope})
     return s
 @app.post('/api/demo/start',status_code=202)
-def start(bg:BackgroundTasks,scope:str='sample'):
-    with LOCK: s=create(scope)
+def start(bg:BackgroundTasks,scope:str='sample',dispute:str='DISP-002'):
+    with LOCK: s=create(scope,dispute)
     bg.add_task(run,s['case_id']); return s
 @app.post('/api/demo/official-reset')
-def official(scope:str='sample'):
-    s=create(scope); return run(s['case_id'])
+def official(scope:str='sample',dispute:str='DISP-002'):
+    s=create(scope,dispute); return run(s['case_id'])
 @app.get('/api/cases')
 def list_cases(status:str|None=None,category:str|None=None):
     rows=store.query('SELECT state_json,updated_at FROM cases ORDER BY updated_at DESC,case_id DESC')
@@ -121,12 +125,14 @@ def list_cases(status:str|None=None,category:str|None=None):
 def submit_case(req:CaseRequest,bg:BackgroundTasks):
     require_rider()
     if req.actor!='rider':raise HTTPException(403,'The submitting actor must be Rider')
+    if req.trip_id in official_samples.SAMPLES:  # picked from the case list like any other case
+        req=req.model_copy(update=dict(official_dispute_id=req.trip_id,trip_id=None,policy_scope='sample'))
     if req.trip_id and req.official_dispute_id: raise HTTPException(422,'Select either a simulation trip or the official sample')
     template=simulation.find(req.trip_id) if req.trip_id else None
     if req.trip_id and not template: raise HTTPException(422,'Unknown simulation trip ID')
     if template and req.category!=template['category']: raise HTTPException(422,'Case category must match the selected trip')
-    if req.official_dispute_id and req.category!='no_show':
-        raise HTTPException(422,'DISP-002 is a no-show dataset and cannot be reused as evidence for another dispute category')
+    if req.official_dispute_id and req.category!=official_samples.SAMPLES[req.official_dispute_id]['category']:
+        raise HTTPException(422,f'{req.official_dispute_id} is a {official_samples.SAMPLES[req.official_dispute_id]["category"]} dataset and cannot be reused for another dispute category')
     if template:
         s=dict(case_id=store.next_case_id(),official_dispute_id=None,trip_id=req.trip_id,data_kind='simulation',
             title=req.title,category=req.category,submission=req.model_dump(),policy_scope='simulation',status='submitted',
@@ -135,7 +141,7 @@ def submit_case(req:CaseRequest,bg:BackgroundTasks):
         store.save(s); store.event(s['case_id'],'submitted','lifecycle',dict(trip_id=req.trip_id,category=req.category,data_kind='simulation',statement_verified=False))
         bg.add_task(run,s['case_id'])
     elif req.official_dispute_id:
-        s=create(req.policy_scope)
+        s=create(req.policy_scope,req.official_dispute_id)
         s.update(title=req.title,category=req.category,submission=req.model_dump())
         store.save(s); bg.add_task(run,s['case_id'])
     else:
@@ -150,7 +156,7 @@ def submit_case(req:CaseRequest,bg:BackgroundTasks):
     return s
 
 @app.get('/api/demo/trips')
-def demo_trips(): return {'trips':simulation.templates(),'data_kind':'simulation','policy_source':'Official Help Center snapshot; explicit demonstration applicability only'}
+def demo_trips(): return {'trips':official_samples.templates()+simulation.templates(),'data_kind':'simulation','policy_source':'Ryde Dispute Resolution Policy v2.1 (synthetic trip records)'}
 
 @app.get('/api/cases/latest')
 def latest():

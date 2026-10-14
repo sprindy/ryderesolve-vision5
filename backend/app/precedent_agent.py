@@ -102,6 +102,8 @@ def alignment(verdict_liability, rec):
         return 'NO_PRECEDENT', ''
     if verdict_liability == target:
         return 'FOLLOWED', ''
+    if verdict_liability == 'undetermined':
+        return 'DISTINGUISHED', 'The current records are not yet complete enough to rule, so no past ruling can be applied.'
     basis = next((p for p in rec['precedents'] if p['outcome'] == target and p['differences']), None)
     if not basis:
         return 'DISTINGUISHED', ''

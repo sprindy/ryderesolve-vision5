@@ -1,11 +1,7 @@
 // Pages work with backend routes or a separate local static server on 5173.
-// On GitHub Pages the backend is hosted separately; set BACKEND_URL below.
-const BACKEND_URL = 'https://euculc-etsxek-8080.app.cloudstudio.work';
-
+// Change apiBase if the API runs on another origin/port.
 window.RYDE_CONFIG = {
-  apiBase: window.location.port === '5173'
-    ? 'http://127.0.0.1:8000'
-    : (window.location.hostname.endsWith('.github.io') ? BACKEND_URL : '')
+  apiBase: window.location.port === '5173' ? 'http://127.0.0.1:8000' : ''
 };
 if (window.location.protocol === 'file:') {
   window.addEventListener('DOMContentLoaded', () => {

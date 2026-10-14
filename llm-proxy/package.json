@@ -1,0 +1,12 @@
+{
+  "name": "ryderesolve-llm-proxy",
+  "version": "1.0.0",
+  "description": "LLM proxy bridging WorkBuddy Cloud SDK to the Python backend's OpenAI-compatible API",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@tencent-ai/workbuddy-cloud-sdk": "dev"
+  }
+}

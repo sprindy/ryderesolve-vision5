@@ -1,1 +1,149 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>RydeResolve · Admin</title><link rel="stylesheet" href="./styles.css"><link rel="stylesheet" href="./admin.css"><link rel="stylesheet" href="./reference-theme.css"><link rel="stylesheet" href="./workspace-v2.css"></head><body><div class="workspace-shell"><aside class="workspace-sidebar"><a href="./index.html" class="brand">ryde<span>.</span></a><div class="brand-subtitle">Resolution intelligence</div><div class="side-label">Workspace</div><nav><button class="side-link active" id="navOverview" onclick="showOverview()"><span class="nav-symbol">▦</span> Overview</button><button class="side-link" onclick="switchTab('overview')" data-side-tab="overview"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 7V5a2 2 0 0 1 2-2h5l2 3h7a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg><span>Case workspace</span></button><button class="side-link " hidden onclick="switchTab('agents')" data-side-tab="agents"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 3v18M4 7h16M5 7l-3 6h6Zm14 0-3 6h6ZM8 21h8"/></svg><span>The agents</span></button><button class="side-link " hidden onclick="switchTab('policies')" data-side-tab="policies"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 5c-3-2-6-2-9-1v15c3-1 6-1 9 1 3-2 6-2 9-1V4c-3-1-6-1-9 1Zm0 0v15"/></svg><span>Policy library</span></button><button class="side-link " onclick="switchTab('audit')" data-side-tab="audit"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 3h9l4 4v14H6ZM14 3v5h5M9 12h7M9 16h7"/></svg><span>Audit trail</span></button></nav><button class="side-link" onclick="showReviewQueue()">♧ Human review <span id="reviewCount" class="pill warn">0</span></button><button class="side-link" onclick="showDemoKnowledge()"><span class="nav-symbol">▤</span> Policy & precedents</button><button class="side-link" onclick="showMeasurements()"><span class="nav-symbol">◇</span> Evaluation lab</button><button class="side-link" onclick="switchTab('history')" data-side-tab="history"><span class="nav-symbol">↺</span> Party history</button><div class="side-label">Experiences</div><nav><a class="side-link" href="./rider.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="7" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/></svg><span>Rider App</span></a><a class="side-link" href="./driver.html"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 16V9l3-5h10l3 5v7ZM4 9h16M6 16v4M18 16v4M7 12h1M16 12h1"/></svg><span>Driver App</span></a></nav><div class="side-system"><span class="status-dot"></span> Demo workspace<p>4 agents · code handles money</p><p>Deterministic settlement</p></div><div class="side-note"><b>Evidence first.</b><p>Every preliminary decision can be challenged by the party it goes against.<br>Unsafe cases go to a person.</p></div></aside><div class="workspace-body"><header class="workspace-top"><span>Workspace <span class="crumb">/</span> Admin experience</span><div class="top-meta"><span class="demo-pill"><span class="status-dot"></span>Case management</span><span>Singapore · SGD</span><span class="avatar">A</span></div></header><main class="admin-page"><div class="hero"><div><div class="eyebrow">Ryde resolution workspace</div><h1 id="caseHeading">Case workspace</h1><p class="sub" id="caseSubtitle">Grounded decisions, clear evidence, and human oversight — working together.</p></div><div class="actions"><a class="button-link" href="./rider.html">Open Rider App</a></div></div><div id="sessionRecovery" class="notice" role="status" hidden></div><div id="notice" class="notice" role="status" hidden></div><div id="dashboard"></div><div id="caseList" hidden></div><div id="caseSubmission" hidden></div><div id="app" hidden></div><footer class="workspace-footer">Demo: synthetic trips, real Ryde Help Center policy text, a simulated 12-hour clock and no real payments.</footer></main></div></div><script>window.ROLE='admin';</script><script src="./config.js"></script><script src="./common.js?v=3-history"></script><script src="./humanize.js"></script><script src="./submission.js"></script><script src="./challenge-window.js"></script><script src="./admin.js?v=3-history"></script><script src="./admin-dashboard.js"></script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RydeResolve · Admin</title>
+<link rel="stylesheet" href="./styles.css">
+<link rel="stylesheet" href="./admin.css">
+<link rel="stylesheet" href="./reference-theme.css">
+<link rel="stylesheet" href="./workspace-v2.css">
+</head>
+<body>
+<div class="workspace-shell">
+<aside class="workspace-sidebar">
+<a href="./index.html" class="brand">ryde<span>.</span></a>
+<div class="brand-subtitle">Resolution intelligence</div>
+
+<div class="side-group">
+<div class="side-label">Dashboard</div>
+<nav>
+<button class="side-link" id="navOverview" data-nav="dashboard" onclick="showOverview()">
+<span class="nav-symbol">&#9635;</span> <span>Overview</span>
+</button>
+</nav>
+</div>
+
+<div class="side-group">
+<div class="side-label">Cases</div>
+<nav>
+<button class="side-link" data-nav="cases-all" onclick="showCaseOverview()">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 7V5a2 2 0 0 1 2-2h5l2 3h7a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/></svg>
+<span>All cases</span>
+</button>
+<button class="side-link" data-nav="cases-review" onclick="showReviewQueue()">
+<span class="nav-symbol">&#9825;</span> <span>Human review</span>
+<span id="reviewCount" class="pill warn side-pill-count">0</span>
+</button>
+<button class="side-link" data-nav="cases-pending" onclick="showPendingCases()">
+<span class="nav-symbol">&#9681;</span> <span>Waiting for response</span>
+</button>
+</nav>
+</div>
+
+<div class="side-group" id="sideGroupCaseDetail" hidden>
+<div class="side-label">Case Detail <small id="sideCaseId" class="side-case-id"></small></div>
+<nav>
+<button class="side-link" data-nav="tab-overview" onclick="switchTab('overview')" data-side-tab="overview">
+<span class="nav-symbol">&#9670;</span> <span>Decision</span>
+</button>
+<button class="side-link" data-nav="tab-agents" onclick="switchTab('agents')" data-side-tab="agents">
+<span class="nav-symbol">&#9878;</span> <span>The agents</span>
+</button>
+<button class="side-link" data-nav="tab-debate" onclick="switchTab('debate')" data-side-tab="debate">
+<span class="nav-symbol">&#8654;</span> <span>Debate rounds</span>
+</button>
+<button class="side-link" data-nav="tab-tools" onclick="switchTab('tools')" data-side-tab="tools">
+<span class="nav-symbol">&#8981;</span> <span>Agent activity</span>
+</button>
+<button class="side-link" data-nav="tab-evidence" onclick="switchTab('evidence')" data-side-tab="evidence">
+<span class="nav-symbol">&#9776;</span> <span>Evidence</span>
+</button>
+<button class="side-link" data-nav="tab-history" onclick="switchTab('history')" data-side-tab="history">
+<span class="nav-symbol">&#8635;</span> <span>Party history</span>
+</button>
+<button class="side-link" data-nav="tab-policies" onclick="switchTab('policies')" data-side-tab="policies">
+<span class="nav-symbol">&#9775;</span> <span>Policies</span>
+</button>
+<button class="side-link" data-nav="tab-audit" onclick="switchTab('audit')" data-side-tab="audit">
+<span class="nav-symbol">&#8803;</span> <span>Audit trail</span>
+</button>
+</nav>
+</div>
+
+<div class="side-group">
+<div class="side-label">Knowledge Base</div>
+<nav>
+<button class="side-link" data-nav="knowledge" onclick="showDemoKnowledge()">
+<span class="nav-symbol">&#9636;</span> <span>Policy &amp; precedents</span>
+</button>
+<button class="side-link" data-nav="measurements" onclick="showMeasurements()">
+<span class="nav-symbol">&#9671;</span> <span>Evaluation lab</span>
+</button>
+</nav>
+</div>
+
+<div class="side-group">
+<div class="side-label">Experiences</div>
+<nav>
+<a class="side-link" href="./rider.html">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="7" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/></svg>
+<span>Rider App</span>
+</a>
+<a class="side-link" href="./driver.html">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 16V9l3-5h10l3 5v7ZM4 9h16M6 16v4M18 16v4M7 12h1M16 12h1"/></svg>
+<span>Driver App</span>
+</a>
+</nav>
+</div>
+
+</aside>
+
+<div class="workspace-body">
+<header class="workspace-top">
+<div class="page-breadcrumb">
+<span class="crumb-root">Admin</span>
+<span class="crumb-sep">&#8250;</span>
+<span class="crumb-section" id="breadcrumbSection">Dashboard</span>
+<span class="crumb-sep" id="crumbSep2">&#8250;</span>
+<span class="crumb-page" id="breadcrumbPage">Overview</span>
+</div>
+<div class="top-meta">
+<span class="demo-pill"><span class="status-dot"></span>Case management</span>
+<span>Singapore &middot; SGD</span>
+<span class="avatar">A</span>
+</div>
+</header>
+
+<main class="admin-page">
+<div class="hero">
+<div>
+<div class="page-context-badge" id="pageContextBadge">Admin Console &middot; Dashboard</div>
+<h1 id="caseHeading">Every dispute. A fairer outcome.</h1>
+<p class="sub" id="caseSubtitle">Grounded decisions, clear evidence, and human oversight &mdash; working together.</p>
+</div>
+<div class="actions">
+<a class="button-link" href="./rider.html">Open Rider App</a>
+</div>
+</div>
+<div id="sessionRecovery" class="notice" role="status" hidden></div>
+<div id="notice" class="notice" role="status" hidden></div>
+<div id="dashboard"></div>
+<div id="caseList" hidden></div>
+<div id="caseSubmission" hidden></div>
+<div id="app" hidden></div>
+<div id="reviewForm" hidden></div>
+<footer class="workspace-footer">Demo: synthetic trips, real Ryde Help Center policy text, a simulated 12-hour clock and no real payments.</footer>
+</main>
+</div>
+</div>
+<script>window.ROLE='admin';</script>
+<script src="./config.js"></script>
+<script src="./common.js?v=3-history"></script>
+<script src="./humanize.js"></script>
+<script src="./submission.js"></script>
+<script src="./challenge-window.js"></script>
+<script src="./admin.js?v=3-history"></script>
+<script src="./admin-dashboard.js?v=2"></script>
+</body>
+</html>

@@ -16,18 +16,18 @@ class EnginesTest(unittest.TestCase):
         # RYDE_DB_PATH only applies if this module imports store first; pin the temp DB explicitly.
         cls.old_db=store.DB;store.DB=Path(_tmp.name)/'unit.sqlite'
         store.init(); store.save({'case_id':'UNIT','status':'processing','official_dispute_id':'DISP-002'})
-        cls.tools=ReadTools('UNIT','rider_advocate',1)
+        cls.tools=ReadTools('UNIT','unit_test_reader',1)  # not an advocate, so not limited to one side's sources
         for name in ('get_dispute','get_trip','get_trip_gps','get_communications','get_app_events','search_policy'):
             cls.tools.call(name)
         cls.bundle=cls.tools.bundle
     @classmethod
     def tearDownClass(cls):store.DB=cls.old_db
     def test_only_official_business_records(self):
-        self.assertEqual(len(store.query('SELECT * FROM source_records')),29)
-        self.assertEqual(len(store.query("SELECT * FROM source_records WHERE source_table='gps_telemetry'")),8)
-        self.assertEqual(len(store.query("SELECT * FROM source_records WHERE source_table='chat_logs'")),6)
-        self.assertEqual(len(store.query("SELECT * FROM source_records WHERE source_table='app_events'")),10)
-        self.assertEqual(store.query("SELECT * FROM precedent_cases WHERE precedent_id NOT LIKE 'SEED-%'"),[])
+        self.assertEqual(len(store.query("SELECT * FROM source_records WHERE dispute_id='DISP-002'")),29)
+        self.assertEqual(len(store.query("SELECT * FROM source_records WHERE dispute_id='DISP-002' AND source_table='gps_telemetry'")),8)
+        self.assertEqual(len(store.query("SELECT * FROM source_records WHERE dispute_id='DISP-002' AND source_table='chat_logs'")),6)
+        self.assertEqual(len(store.query("SELECT * FROM source_records WHERE dispute_id='DISP-002' AND source_table='app_events'")),10)
+        self.assertEqual(store.query("SELECT * FROM precedent_cases WHERE json_extract(data_json,'$.session_id')!='GLOBAL_SEED'"),[])
     def test_expected_liability_not_read_from_fixture_answer(self):
         self.assertEqual(engines.liability_rule(self.bundle)[0],'charge_upheld')
     def test_wait_and_contact(self):
@@ -95,22 +95,23 @@ class EnginesTest(unittest.TestCase):
         store.save({'case_id':'ADVOCATES','status':'processing','official_dispute_id':'DISP-002'})
         one={}; bundle={}
         for role in ('rider','driver'):
-            out=agents.advocate('ADVOCATES',role,1,None,None)
+            out=agents.ADVOCATES[role].run('ADVOCATES',1,None,None,None,{},'initial')
             self.assertTrue(engines.validate_argument(out['argument'],out['bundle'],role,conflicts=out['conflicts'])['valid'])
             one[role]=out['argument']; bundle.update(out['bundle'])
-        self.assertEqual(engines.liability_rule(bundle)[0],'charge_upheld')
+        # Round 1 core evidence alone cannot settle a no-show: contact attempts are not in yet.
+        self.assertEqual(engines.liability_rule(bundle)[0],'undetermined')
         two={}; next_bundle=dict(bundle)
         for role in ('rider','driver'):
             opponent=one['driver' if role=='rider' else 'rider']
-            out=agents.advocate('ADVOCATES',role,2,one[role],opponent)
+            out=agents.ADVOCATES[role].run('ADVOCATES',2,one[role],opponent,None,bundle,'initial')
             self.assertTrue(engines.validate_argument(out['argument'],out['bundle'],role,opponent,out['conflicts'])['valid'])
-            self.assertTrue(out['argument']['rebuttal_claim_ids']); two[role]=out['argument']; next_bundle.update(out['bundle'])
+            self.assertTrue(out['new_evidence_ids']);self.assertTrue(out['argument']['rebuttal_claim_ids']); two[role]=out['argument']; next_bundle.update(out['bundle'])
         progress=engines.progress(one,two,next_bundle,bundle)
-        self.assertFalse(progress['has_progress'])
+        self.assertTrue(progress['new_evidence_ids'])
         verdict=agents.judge('ADVOCATES',next_bundle,two,2,'final')
-        self.assertTrue(engines.validate_verdict(verdict,next_bundle)['valid'])
+        self.assertEqual(verdict['liability'],'charge_upheld');self.assertTrue(engines.validate_verdict(verdict,next_bundle)['valid'])
         self.assertGreaterEqual(engines.confidence(next_bundle,True,'charge_upheld','charge_upheld')['score'],.85)
-        self.assertGreater(len(store.audit_rows('ADVOCATES','agent_tool_calls')),20)
+        self.assertGreater(len(store.audit_rows('ADVOCATES','agent_tool_calls')),15)
     def test_concrete_agent_implementations(self):
         self.assertEqual(len(agents.registry()),4)
         self.assertEqual({a['class_name'] for a in agents.registry()},{'RiderAdvocateAgent','DriverAdvocateAgent','PolicyPrecedentAgent','JudgeAgent'})
@@ -122,8 +123,10 @@ class EnginesTest(unittest.TestCase):
         r=agents.RIDER_AGENT.run('ISOLATED',1)
         d=agents.DRIVER_AGENT.run('ISOLATED',1)
         self.assertIsNot(r['bundle'],d['bundle'])
-        self.assertNotIn('get_communications',[c['tool'] for c in r['tool_calls']])
-        self.assertIn('get_communications',[c['tool'] for c in d['tool_calls']])
+        # Round 1: each side reads its own core sources; only the driver side reads the driver GPS.
+        self.assertNotIn('get_trip_gps',[c['tool'] for c in r['tool_calls']])
+        self.assertIn('get_trip_gps',[c['tool'] for c in d['tool_calls']])
+        self.assertIn('get_rider_profile',[c['tool'] for c in r['tool_calls']])
         calls=store.audit_rows('ISOLATED','agent_tool_calls')
         self.assertEqual({c['agent'] for c in calls},{'rider_advocate','driver_advocate'})
     def test_sufficient_evidence_retains_challenge_window(self):
@@ -148,3 +151,11 @@ class EnginesTest(unittest.TestCase):
 if __name__=='__main__': unittest.main()
 
 
+
+class ClaimIdTest(unittest.TestCase):
+    def test_system_assigns_claim_ids(self):
+        from app import engines
+        data=dict(role='rider',position='refund',claims=[dict(claim_id='C1',kind='wait_minutes',value=3,evidence_ids=[],policy_ids=[])],rebuttal_claim_ids=[],summary='The driver left early.')
+        out=engines.validate_argument(data,{},'rider')
+        self.assertNotIn('INVALID_CLAIM_ID',out['errors'])
+        self.assertEqual(data['claims'][0]['claim_id'],engines.cid(data['claims'][0]))

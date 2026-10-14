@@ -60,42 +60,42 @@ class APITest(unittest.TestCase):
         out=self.client.post('/api/cases/'+s['case_id']+'/simulate-timeout').json()
         self.assertEqual(out['status'],'human_review');self.assertNotIn('final',out)
     def test_safety_and_history(self):
-        s=self.sim('SIM-SAFE-001');self.assertEqual(s['status'],'human_review');self.assertIn('SAFETY_HIGH_IMPACT',s['human_review_routing']['active_reasons']);self.assertNotIn('final',s)
-        s=self.sim('SIM-HIST-001');self.assertEqual(s['final_judge']['liability'],'charge_upheld');self.assertLess(s['claim_reliability_signals']['score'],.6);self.assertTrue(s['claim_reliability_signals']['corroboration_required']);self.assertEqual(s['status'],'challenge_window')
+        s=self.sim('BM-NS-046');self.assertEqual(s['status'],'human_review');self.assertIn('SAFETY_HIGH_IMPACT',s['human_review_routing']['active_reasons']);self.assertNotIn('final',s)
+        s=self.sim('BM-NS-026');self.assertEqual(s['final_judge']['liability'],'charge_upheld');self.assertLess(s['claim_reliability_signals']['score'],.6);self.assertTrue(s['claim_reliability_signals']['corroboration_required']);self.assertEqual(s['status'],'challenge_window')
     def test_generic_or_fake_evidence_challenge_rejected(self):
-        s=self.sim('SIM-NS-001');self.assertEqual(s['challenge']['affected_party'],'rider');self.role('rider')
+        s=self.sim('BM-NS-001');self.assertEqual(s['challenge']['affected_party'],'rider');self.role('rider')
         for req in [dict(actor='rider',ground='disagreement',statement='I disagree with the outcome without other facts.'),dict(actor='rider',ground='factual_error',statement='The location in this record is not correct.',evidence_ids=['FAKE'])]:
             out=self.client.post('/api/cases/'+s['case_id']+'/challenge',json=req).json();self.assertFalse(out['last_challenge_gate']['admitted']);self.assertEqual(out['status'],'challenge_window')
-    def test_verified_driver_evidence_reverses_preliminary_refund_after_debate(self):
-        s=self.sim('SIM-NS-004');cid=s['case_id'];self.role('driver')
-        a=self.client.post(f'/api/cases/{cid}/evidence',json=dict(actor='driver',filename='server.json',payload=simulation.driver_supplement())).json()
-        req=dict(actor='driver',ground='new_evidence',statement='Server timestamps support four minutes of waiting rather than two.',artifact_ids=[a['artifact_id']])
+    def test_verified_rider_evidence_reverses_preliminary_charge_after_debate(self):
+        s=self.sim('BM-NS-027');cid=s['case_id'];self.role('rider')
+        a=self.client.post(f'/api/cases/{cid}/evidence',json=dict(actor='rider',filename='server.json',payload=simulation.supplements()['BM-NS-027'])).json()
+        req=dict(actor='rider',ground='new_evidence',statement='The server receipt shows I moved the pickup pin before the driver arrived.',artifact_ids=[a['artifact_id']])
         self.assertEqual(self.client.post(f'/api/cases/{cid}/challenge',json=req).status_code,200)
         self.role('admin');out=self.client.get('/api/cases/'+cid).json()
-        self.assertEqual(out['status'],'closed',out.get('human_review_routing'));self.assertEqual(out['final_judge']['liability'],'charge_upheld')
+        self.assertEqual(out['status'],'closed',out.get('human_review_routing'));self.assertEqual(out['final_judge']['liability'],'refund')
         self.assertEqual(out['final']['source'],'agent_reassessed_after_challenge');self.assertEqual(out['final']['basis'],'VERIFIED_EVIDENCE');self.assertGreaterEqual(len(out['rounds']),1)
         self.assertTrue(any(e['kind']=='party_context_considered' for e in store.audit_rows(cid,'audit_timeline')))
-    def test_uncorroborated_clock_finalizes_only_after_burden_not_met(self):
-        s=self.sim('SIM-NS-004');self.assertEqual(s['challenge']['mode'],'EVIDENCE_REQUIRED');self.assertEqual(s['challenge']['affected_party'],'driver')
+    def test_unsynced_pickup_finalizes_only_after_burden_not_met(self):
+        s=self.sim('BM-NS-027');self.assertEqual(s['challenge']['mode'],'EVIDENCE_REQUIRED');self.assertEqual(s['challenge']['affected_party'],'rider')
         out=self.client.post('/api/cases/'+s['case_id']+'/simulate-timeout').json()
-        self.assertEqual(out['status'],'closed');self.assertEqual(out['final']['basis'],'BURDEN_NOT_MET');self.assertEqual(out['final']['refund_amount_cents'],661)
+        self.assertEqual(out['status'],'closed');self.assertEqual(out['final']['basis'],'BURDEN_NOT_MET');self.assertEqual(out['final']['refund_amount_cents'],0)
         self.assertFalse(store.query('SELECT * FROM precedent_cases WHERE precedent_id=?',(s['case_id'],)))
     def test_human_requires_refs_and_records_override(self):
-        s=self.sim('SIM-NS-002');cid=s['case_id']
+        s=self.sim('BM-NS-047');cid=s['case_id']
         self.assertEqual(self.client.post(f'/api/cases/{cid}/human-review',json=dict(liability='refund',rationale='Override after reviewing source GPS.')).status_code,422)
         req=dict(liability='refund',rationale='Demo reviewer explicitly overrides after examining conflicting GPS and recorded charge.',evidence_ids=list(s['bundle']),policy_refs=s['applicable_policy_refs'],feedback_eligible=True)
-        out=self.client.post(f'/api/cases/{cid}/human-review',json=req).json();self.assertEqual(out['status'],'closed');self.assertTrue(out['human_review_result']['override']);self.assertFalse(out['human_review_result']['feedback_eligible']);self.assertEqual(out['refund_engine']['amount_cents'],661)
+        out=self.client.post(f'/api/cases/{cid}/human-review',json=req).json();self.assertEqual(out['status'],'closed');self.assertTrue(out['human_review_result']['override']);self.assertFalse(out['human_review_result']['feedback_eligible']);self.assertEqual(out['refund_engine']['amount_cents'],500)
         # The override is captured as a correction, but cannot act as precedent until approved.
         correction=json.loads(store.query('SELECT data_json FROM precedent_cases WHERE precedent_id=?',(cid,))[0]['data_json'])
         self.assertEqual((correction['kind'],correction['status'],correction['eligible']),('REVIEWER_CORRECTION','PENDING_APPROVAL',False))
     def test_human_validated_feedback(self):
-        s=self.sim('SIM-NS-003');s['status']='human_review';store.save(s)
+        s=self.sim('BM-NS-016');s['status']='human_review';store.save(s)
         req=dict(liability='refund',rationale='Verified wait of two minutes fails the pinned policy threshold.',evidence_ids=list(s['bundle']),policy_refs=s['applicable_policy_refs'],feedback_eligible=True)
         out=self.client.post('/api/cases/'+s['case_id']+'/human-review',json=req).json();self.assertEqual(out['status'],'closed');self.assertTrue(out['human_review_result']['feedback_eligible'])
         rows=store.query('SELECT data_json FROM precedent_cases WHERE precedent_id=?',(s['case_id'],));self.assertEqual(json.loads(rows[0]['data_json'])['authority'],'HIGH')
     def test_refund_trace_and_version_endpoints(self):
-        s=self.sim('SIM-NS-003');out=self.client.post('/api/cases/'+s['case_id']+'/simulate-timeout').json();p=out['refund_engine']
-        self.assertEqual(p['amount_cents'],661);self.assertTrue(p['calculation_trace']);self.assertTrue(p['input_evidence_ids']);self.assertTrue(p['idempotency_key']);self.assertEqual(out['applicable_policy_refs'],['HC-RIDER-NOSHOW@demo-2'])
+        s=self.sim('BM-NS-016');out=self.client.post('/api/cases/'+s['case_id']+'/simulate-timeout').json();p=out['refund_engine']
+        self.assertEqual(p['amount_cents'],500);self.assertTrue(p['calculation_trace']);self.assertTrue(p['input_evidence_ids']);self.assertTrue(p['idempotency_key']);self.assertEqual(out['applicable_policy_refs'],['V21-NOSHOW-WAIT@demo-2','V21-NOSHOW-FEE@demo-2','V21-NOSHOW-CONTACT@demo-2','V21-DRIVER-NOSHOW@demo-2'])
         s=self.run_case();self.assertTrue(all(ref.endswith('@demo-1') for ref in s['applicable_policy_refs']))
         self.assertEqual(len(self.client.get('/api/policies/SAMPLE-DISP-002-NO/versions').json()['versions']),2)
         self.assertIn('consistency',self.client.get('/api/cases/'+s['case_id']+'/precedents').json());self.assertGreater(self.client.get('/api/demo/metrics').json()['node_runs'],0)

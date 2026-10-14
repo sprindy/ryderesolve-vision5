@@ -49,19 +49,19 @@ class LLMModeTests(unittest.TestCase):
 
     def test_agreeing_judge_opens_window_with_llm_narrative(self):
         model=ScriptedModel()
-        with patch('app.llm_provider.call',model):s=component_case('SIM-NS-001')
+        with patch('app.llm_provider.call',model):s=component_case('BM-NS-001')
         self.assertEqual(s['status'],'challenge_window',s.get('human_review_routing'));self.assertEqual(s['final_validation']['rule_check']['status'],'AGREES')
         self.assertIn('four minutes',s['final_judge']['rider_explanation']);self.assertTrue(s['arguments']['driver']['summary'])
         self.assertEqual(model.calls.count('judge'),1,'assessment must not call the Judge twice')
         tools={c['tool_name'] for c in store.audit_rows(s['case_id'],'agent_tool_calls')};self.assertTrue(set(ADVOCATE_TOOLS)<=tools)
 
     def test_disagreeing_judge_goes_to_human_with_both_views(self):
-        with patch('app.llm_provider.call',ScriptedModel(judge_liability='refund')):s=component_case('SIM-NS-001')
+        with patch('app.llm_provider.call',ScriptedModel(judge_liability='refund')):s=component_case('BM-NS-001')
         self.assertEqual(s['status'],'human_review');self.assertIn('JUDGE_RULE_DISAGREEMENT',s['human_review_routing']['active_reasons'])
         check=s['final_validation']['rule_check'];self.assertEqual((check['judge_liability'],check['rule_liability']),('refund','charge_upheld'))
 
     def test_malformed_json_is_repaired_once(self):
-        with patch('app.llm_provider.call',ScriptedModel(malformed_first=True)):s=component_case('SIM-NS-001')
+        with patch('app.llm_provider.call',ScriptedModel(malformed_first=True)):s=component_case('BM-NS-001')
         self.assertEqual(s['status'],'challenge_window',s.get('human_review_routing'))
 
     def test_money_in_judge_narrative_fails_closed(self):
@@ -69,11 +69,11 @@ class LLMModeTests(unittest.TestCase):
         def judge(messages):
             out=json.loads(original(messages)['content']);out['rider_explanation']='You will receive S$6.61 back.';return dict(role='assistant',content=json.dumps(out))
         model.judge=judge
-        with patch('app.llm_provider.call',model):s=component_case('SIM-NS-001')
+        with patch('app.llm_provider.call',model):s=component_case('BM-NS-001')
         self.assertEqual(s['status'],'human_review');self.assertIn('MONEY_IN_NARRATIVE',s['judge_validation']['errors'])
 
     def test_judge_must_address_precedent_recommendation(self):
-        with patch('app.llm_provider.call',ScriptedModel(ignore_precedent=True)):s=component_case('SIM-NS-001')
+        with patch('app.llm_provider.call',ScriptedModel(ignore_precedent=True)):s=component_case('BM-NS-001')
         self.assertEqual(s['status'],'human_review');self.assertIn('PRECEDENT_RECOMMENDATION_IGNORED',s['judge_validation']['errors'])
         self.assertEqual(s['precedent_recommendation']['recommended_liability'],'charge_upheld')
 

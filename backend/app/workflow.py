@@ -1,10 +1,13 @@
-"""Compiled LangGraph: assessment, preliminary decision, affected-party challenge, bounded debate.
+"""Compiled LangGraph: every dispute is debated, then routed.
 
-assessment  : Rider Advocate + Driver Advocate + Judge -> preliminary liability -> route
+Each round: Rider Advocate and Driver Advocate gather NEW evidence from their own side -> evidence gate
+(from round 2, no new evidence from either side stops the debate) -> validation -> Policy & Precedent Agent
+-> Judge -> confidence. A confident, determined ruling ends the debate; otherwise the next round must bring
+new evidence. At most 3 rounds. The last Judge ruling is the decision, then:
   hard blocker / undetermined      -> human review
   sufficient evidence              -> DECISION_REVIEW window for the affected party
   party-correctable evidence gap   -> EVIDENCE_REQUIRED window (challenge only with evidence)
-debate      : after an admitted evidence challenge, up to 3 rounds, final Judge, then close or human review
+A verified evidence challenge re-opens the debate (stage "challenge"), after which the case closes or goes to a person.
 """
 from copy import deepcopy
 from typing import TypedDict
@@ -30,25 +33,58 @@ def tracked(name,fn):
         return {'payload':s}
     return execute
 
+MAX_ROUNDS=3
+RESOLVED_CONFIDENCE=.85
+
 def prepare(s):
-    s['phase']=s.get('phase','assessment')
-    s['round_no']=s.get('round_no',0)+1 if s['phase']=='debate' else 0
+    s['stage']=s.get('stage','initial');s['phase']='debate'
+    s['round_no']=s.get('round_no',0)+1
     s['previous_arguments']=deepcopy(s.get('arguments',{}))
+    s['previous_validations']=deepcopy(s.get('advocate_validations',{}))
     s['previous_bundle']=deepcopy(s.get('bundle',{}))
     s['previous_liability']=s.get('provisional_judge',{}).get('liability')
-    s['arguments']={}; s['advocate_validations']={}
+    s['arguments']={}; s['advocate_validations']={}; s['round_new_evidence']={}
 
-def run_role(s,role):
+def advocate_output(s,role):
     other='driver' if role=='rider' else 'rider'
-    # Round 1 receives no opponent argument. Rebuttals use the prior complete round for symmetry.
+    # Both advocates start from the same case file, so neither sees the other's evidence from this round.
     opponent=s['previous_arguments'].get(other) if s['round_no']>1 else None
-    output=agents.ADVOCATES[role].run(s['case_id'],s['round_no'],s['previous_arguments'].get(role),opponent,s.get('challenge_request'))
+    return agents.ADVOCATES[role].run(s['case_id'],s['round_no'],s['previous_arguments'].get(role),opponent,s.get('challenge_request'),s['previous_bundle'],s['stage'])
+
+def run_advocates(s):
+    """Both advocates work at the same time on the same case file; results are recorded rider first, as before.
+    Each thread carries the caller's context (session identity), so case-scope checks still apply."""
+    import contextvars
+    from concurrent.futures import ThreadPoolExecutor
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        futures={role:pool.submit(contextvars.copy_context().run,advocate_output,s,role) for role in ('rider','driver')}
+        outputs={role:future.result() for role,future in futures.items()}
+    for role in ('rider','driver'):record_role(s,role,outputs[role])
+
+def record_role(s,role,output):
     s[role+'_bundle']=output['bundle']; s[role+'_calls']=output['tool_calls']
     s.setdefault('bundle',{}).update(output['bundle'])
+    s['round_new_evidence'][role]=output['new_evidence_ids']
     s['arguments'][role]=output['argument']; s['policy_conflicts']=output['conflicts']
-    store.event(s['case_id'],role+'_advocate','argument',output['argument'])
+    store.event(s['case_id'],role+'_advocate','argument',{**output['argument'],'new_evidence_ids':output['new_evidence_ids']})
     store.event(s['case_id'],role+'_advocate','history_context_considered',{'evidence_ids':[eid for eid,e in output['bundle'].items() if e['source_table'] in ('party_history','pairwise_history')],'rule':'History informs corroboration and reliability only; current-trip evidence determines liability.'})
     if s.get('challenge_request'):store.event(s['case_id'],role+'_advocate','party_context_considered',{'actor':s['challenge_request']['actor'],'statement':s['challenge_request']['statement'],'artifact_ids':s['challenge_request'].get('artifact_ids',[]),'note':'Unverified statement, not proof of current-trip facts. Only corroborated artifacts change facts.'})
+
+# Background material is read but does not count as new evidence about what happened on the trip.
+BACKGROUND_SOURCES={'official_policy_clauses','rider_profile','driver_profile','party_history','pairwise_history','chat_signals','message_labels'}
+
+def evidence_gate(s):
+    """From round 2 a round only goes ahead if at least one advocate brought new trip evidence."""
+    new={role:[eid for eid in ids if s['bundle'][eid]['source_table'] not in BACKGROUND_SOURCES] for role,ids in s['round_new_evidence'].items()}
+    s['round_new_evidence']=new
+    s['evidence_gate']=dict(round_no=s['round_no'],stage=s['stage'],new_evidence=new,passed=s['round_no']==1 or any(new.values()))
+    store.event(s['case_id'],'evidence_gate','round_start',s['evidence_gate'])
+    if s['evidence_gate']['passed']:return
+    # Nothing new: this round is not held. Keep the previous round's arguments and ruling.
+    s.update(arguments=s['previous_arguments'],advocate_validations=s['previous_validations'],bundle=s['previous_bundle'],stop_reason='NO_NEW_EVIDENCE_AT_ROUND_START')
+    row=dict(stage=s['stage'],round_no=s['round_no'],skipped=True,stop_reason='NO_NEW_EVIDENCE_AT_ROUND_START',new_evidence=new)
+    s.setdefault('rounds',[]).append(row)
+    store.write('INSERT INTO debate_rounds(case_id,round_no,data_json,created_at) VALUES(?,?,?,?)',(s['case_id'],len(s['rounds']),store.encode(row),store.iso()))
 
 def validate(s):
     for role in ('rider','driver'):
@@ -68,7 +104,7 @@ def validate(s):
     s['safety_signals']=safety_signals(s,s['bundle']);s['claim_reliability_signals']=history_signals(s['bundle'])
     store.event(s['case_id'],'history_reliability_engine','both_party_context',s['claim_reliability_signals'])
     reliability=s['claim_reliability_signals'];needed=reliability['corroboration_required']
-    core=engines.simulation_coverage(s['bundle']) if s.get('data_kind')=='simulation' else {'gps':bool(engines.values(s['bundle'],'gps_telemetry')),'events':bool(engines.values(s['bundle'],'app_events'))}
+    core=engines.simulation_coverage(s['bundle']) if engines.v21_bound(s['bundle']) else {'gps':bool(engines.values(s['bundle'],'gps_telemetry')),'events':bool(engines.values(s['bundle'],'app_events'))}
     # Party-correctable gaps (client clock, unsynced pickup change) are handled by the evidence-required window.
     core={k:v for k,v in core.items() if k not in ('timing_corroborated','pickup_synced')}
     s['reliability_corroboration']={'required':needed,'fulfilled':all(core.values()),'source_tables':['gps_telemetry','app_events'],'note':'History only changes the corroboration requirement. It never decides trip liability.'}
@@ -88,45 +124,33 @@ def judge_validation(s,verdict):
     return result
 
 def provisional(s):
-    verdict=agents.JUDGE_AGENT.adjudicate(s['case_id'],s['bundle'],s['arguments'],s['round_no'],'preliminary' if s.get('phase')=='assessment' else 'provisional',s.get('precedent_recommendation'))
+    verdict=agents.JUDGE_AGENT.adjudicate(s['case_id'],s['bundle'],s['arguments'],s['round_no'],'provisional',s.get('precedent_recommendation'))
     s['provisional_judge']=verdict; s['judge_validation']=judge_validation(s,verdict)
     s['valid']=s['valid'] and s['judge_validation']['valid']
-    store.write('INSERT INTO decisions(case_id,stage,data_json,created_at) VALUES(?,?,?,?)',(s['case_id'],'preliminary' if s.get('phase')=='assessment' else 'provisional',store.encode({'verdict':verdict,'validator':s['judge_validation']}),store.iso()))
+    store.write('INSERT INTO decisions(case_id,stage,data_json,created_at) VALUES(?,?,?,?)',(s['case_id'],'provisional',store.encode({'verdict':verdict,'validator':s['judge_validation'],'round_no':s['round_no'],'stage':s['stage']}),store.iso()))
     store.event(s['case_id'],'provisional_judge','liability',verdict)
 
 def score(s):
     s['precedent_consistency']=knowledge.consistency(s,s['bundle'],s['provisional_judge'])
     s['confidence']=engines.confidence(s['bundle'],s['valid'],s['previous_liability'],s['provisional_judge']['liability'],s['arguments'],s['precedent_consistency']['status'])
-    p=s['progress']; stable=s['previous_liability']==s['provisional_judge']['liability']
-    if s.get('phase')=='assessment': reason='INITIAL_ASSESSMENT_COMPLETE'
-    elif not s['valid']: reason='VALIDATION_FAILED'
-    elif s['round_no']==1 and s['confidence']['score']>=.85 and s['confidence']['factors']['agent_agreement']==1: reason='CONFIDENT_CONSENSUS_ROUND_1'
-    elif s['round_no']>=2 and not p['has_progress'] and stable: reason='NO_NEW_EVIDENCE_POLICY_CLAIM_OR_POSITION'
-    elif s['round_no']>=2 and stable and s['confidence']['score']>=.85 and not p['new_evidence_ids'] and not p['new_policy_ids'] and not p['position_changes']:
-        reason='CONFIDENT_STABLE_LIABILITY_NO_NEW_EVIDENCE'
-    elif s['round_no']>=3: reason='HARD_MAX_3_ROUNDS'
+    liability=s['provisional_judge']['liability']
+    if not s['valid']: reason='VALIDATION_FAILED'
+    elif liability!='undetermined' and s['confidence']['score']>=RESOLVED_CONFIDENCE: reason='RESOLVED_WITH_CONFIDENCE'
+    elif s['round_no']>=MAX_ROUNDS: reason='HARD_MAX_3_ROUNDS'
     else: reason=None
     s['stop_reason']=reason
-    row=dict(round_no=s['round_no'],phase='independent_arguments' if s['round_no']==1 else 'cross_rebuttal',arguments=s['arguments'],
-        validations=s['advocate_validations'],judge_validation=s['judge_validation'],progress=p,provisional_judge=s['provisional_judge'],confidence=s['confidence'],stop_reason=reason,
-        tool_calls={'rider':s['rider_calls'],'driver':s['driver_calls']})
-    if s.get('phase')=='assessment':
-        s['assessment']=deepcopy(row);s['preliminary_judge']=deepcopy(s['provisional_judge'])
-        store.event(s['case_id'],'initial_assessment','completed',row)
-        return
+    row=dict(stage=s['stage'],round_no=s['round_no'],phase='independent_arguments' if s['round_no']==1 else 'cross_rebuttal',new_evidence=s['round_new_evidence'],
+        arguments=s['arguments'],validations=s['advocate_validations'],judge_validation=s['judge_validation'],progress=s['progress'],provisional_judge=s['provisional_judge'],
+        confidence=s['confidence'],stop_reason=reason,tool_calls={'rider':s['rider_calls'],'driver':s['driver_calls']})
     s.setdefault('rounds',[]).append(row)
-    store.write('INSERT INTO debate_rounds(case_id,round_no,data_json,created_at) VALUES(?,?,?,?)',(s['case_id'],s['round_no'],store.encode(row),store.iso()))
-    store.event(s['case_id'],'confidence_engine','confidence_and_stop',{'confidence':s['confidence'],'stop_reason':reason})
+    store.write('INSERT INTO debate_rounds(case_id,round_no,data_json,created_at) VALUES(?,?,?,?)',(s['case_id'],len(s['rounds']),store.encode(row),store.iso()))
+    store.event(s['case_id'],'confidence_engine','confidence_and_stop',{'confidence':s['confidence'],'stop_reason':reason,'round_no':s['round_no'],'stage':s['stage']})
 
-def adopt_preliminary(s):
-    # The assessment Judge already ruled on the same evidence; reuse it instead of a second Judge call.
-    s['final_judge']=deepcopy(s['preliminary_judge']);s['final_validation']=deepcopy(s['judge_validation'])
-
-def final_judge(s):
-    s['final_judge']=agents.JUDGE_AGENT.adjudicate(s['case_id'],s['bundle'],s['arguments'],s['round_no'],'final',s.get('precedent_recommendation'))
-    s['final_validation']=judge_validation(s,s['final_judge'])
-    s['valid']=s['valid'] and s['final_validation']['valid']
-    store.write('INSERT INTO decisions(case_id,stage,data_json,created_at) VALUES(?,?,?,?)',(s['case_id'],'final_judge',store.encode({'verdict':s['final_judge'],'validator':s['final_validation']}),store.iso()))
+def adopt_final(s):
+    """The last Judge ruling of the debate is the decision; no extra Judge call."""
+    s['final_judge']=deepcopy(s['provisional_judge']);s['final_validation']=deepcopy(s['judge_validation'])
+    if s['stage']=='initial':s['preliminary_judge']=deepcopy(s['final_judge'])
+    store.write('INSERT INTO decisions(case_id,stage,data_json,created_at) VALUES(?,?,?,?)',(s['case_id'],'final_judge',store.encode({'verdict':s['final_judge'],'validator':s['final_validation'],'stage':s['stage'],'rounds':s['round_no']}),store.iso()))
     store.event(s['case_id'],'final_judge','liability',s['final_judge'])
     store.validation(s['case_id'],'final_judge',s['final_validation'])
 
@@ -161,7 +185,7 @@ def route(s):
             explanation=f"The Judge Agent concluded {check['judge_liability']} ({', '.join(check['judge_reason_codes'])}); the deterministic policy rule concluded {check['rule_liability']} ({', '.join(check['rule_reason_codes'])}).",
             needed='Compare the Judge reasoning with the policy rule and the cited records, then record a cited decision.')]
     s['resolution']=res
-    if s.get('phase')=='debate':
+    if s.get('stage')=='challenge':
         # Re-evaluation after an admitted challenge is final: settle if it now stands on verified evidence.
         if res['sufficient'] and not hard:
             store.save(s)
@@ -174,16 +198,16 @@ def route(s):
 
 def build_graph():
     g=StateGraph(GraphState)
-    functions={'prepare_round':prepare,'rider_advocate':lambda s:run_role(s,'rider'),'driver_advocate':lambda s:run_role(s,'driver'),
+    functions={'prepare_round':prepare,'advocates':run_advocates,'evidence_gate':evidence_gate,
       'validator':validate,'debate_progress_checker':check_progress,'policy_precedent_agent':policy_precedent,'provisional_judge':provisional,'confidence_engine':score,
-      'adopt_preliminary':adopt_preliminary,'final_judge':final_judge,'refund_engine':refund,'human_review_routing':route}
+      'adopt_final':adopt_final,'refund_engine':refund,'human_review_routing':route}
     for name,fn in functions.items(): g.add_node(name,tracked(name,fn))
-    g.add_edge(START,'prepare_round'); g.add_edge('prepare_round','rider_advocate'); g.add_edge('rider_advocate','driver_advocate'); g.add_edge('driver_advocate','validator')
+    g.add_edge(START,'prepare_round'); g.add_edge('prepare_round','advocates'); g.add_edge('advocates','evidence_gate')
+    g.add_conditional_edges('evidence_gate',lambda st:'validator' if st['payload']['evidence_gate']['passed'] else 'adopt_final')
     g.add_conditional_edges('validator',lambda st:'debate_progress_checker' if st['payload']['valid'] else 'human_review_routing')
     g.add_edge('debate_progress_checker','policy_precedent_agent'); g.add_edge('policy_precedent_agent','provisional_judge'); g.add_edge('provisional_judge','confidence_engine')
-    g.add_conditional_edges('confidence_engine',lambda st:'human_review_routing' if not st['payload']['valid'] else 'prepare_round' if not st['payload']['stop_reason'] else 'adopt_preliminary' if st['payload'].get('phase')=='assessment' else 'final_judge')
-    g.add_edge('adopt_preliminary','refund_engine')
-    g.add_conditional_edges('final_judge',lambda st:'refund_engine' if st['payload']['valid'] else 'human_review_routing')
+    g.add_conditional_edges('confidence_engine',lambda st:'human_review_routing' if not st['payload']['valid'] else 'adopt_final' if st['payload']['stop_reason'] else 'prepare_round')
+    g.add_edge('adopt_final','refund_engine')
     g.add_edge('refund_engine','human_review_routing')
     g.add_edge('human_review_routing',END)
     return g.compile()
@@ -191,13 +215,13 @@ def build_graph():
 GRAPH=build_graph()
 
 def start_reassessment(cid,gate):
-    """Admitted evidence challenge: both Advocates rebut with the new records, then the final Judge rules."""
+    """Admitted evidence challenge: a new debate stage in which the uploaded evidence is the new evidence."""
     with store.transaction():
         s=store.load(cid)
         if not s or s['status']=='closed':return s
         s['admitted_artifact_ids']=list(dict.fromkeys(s.get('admitted_artifact_ids',[])+gate['artifact_ids']))
-        s.update(status='processing',phase='debate',round_no=0,rounds=[],arguments={},requires_human_review=False,workflow_running=False)
-        for key in ('final_judge','final_validation','provisional_judge'):s.pop(key,None)
+        s.update(status='processing',stage='challenge',phase='debate',round_no=0,requires_human_review=False,workflow_running=False)
+        for key in ('final_judge','final_validation'):s.pop(key,None)
         store.save(s);store.event(cid,'re_evaluation','verified_material_evidence',gate)
     return s
 

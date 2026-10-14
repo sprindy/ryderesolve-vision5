@@ -12,34 +12,35 @@ class ChallengeTests(unittest.TestCase):
  def setUp(self):
   self.tmp=tempfile.TemporaryDirectory();self.old=store.DB;store.DB=Path(self.tmp.name)/'case.sqlite';store.init()
  def tearDown(self):store.DB=self.old;self.tmp.cleanup()
- def upload(self,s):return evidence_intake.ingest(s,EvidenceUpload(actor='driver',filename='server.json',payload=simulation.driver_supplement()))
- def test_driver_supplement_changes_same_case_with_audit(self):
-  s=component_case('SIM-NS-004');cid=s['case_id'];self.assertEqual(s['status'],'challenge_window');self.assertEqual(s['challenge']['mode'],'EVIDENCE_REQUIRED');self.assertEqual(s['preliminary_judge']['liability'],'refund');original=deepcopy(s['bundle'])
+ def upload(self,s):return evidence_intake.ingest(s,EvidenceUpload(actor='rider',filename='server.json',payload=simulation.supplements()['BM-NS-027']))
+ def test_rider_export_changes_same_case_with_audit(self):
+  s=component_case('BM-NS-027');cid=s['case_id'];self.assertEqual(s['status'],'challenge_window');self.assertEqual(s['challenge']['mode'],'EVIDENCE_REQUIRED');self.assertEqual(s['preliminary_judge']['liability'],'charge_upheld');original=deepcopy(s['bundle'])
   a=self.upload(s);self.assertEqual(a['verification_status'],'VERIFIED_SIMULATION');self.assertEqual(self.upload(s)['artifact_id'],a['artifact_id'])
-  req=ChallengeRequest(actor='driver',ground='new_evidence',statement='The server cancellation timestamp corroborates four minutes of waiting.',artifact_ids=[a['artifact_id']]);gate=evidence_intake.challenge_gate(s,req);self.assertEqual(gate['route'],'re_evaluate')
+  req=ChallengeRequest(actor='rider',ground='new_evidence',statement='The server receipt shows the pickup pin was moved before the driver arrived.',artifact_ids=[a['artifact_id']]);gate=evidence_intake.challenge_gate(s,req);self.assertEqual(gate['route'],'re_evaluate')
   from app import workflow
   s['challenge_request']=req.model_dump();store.save(s);workflow.start_reassessment(cid,gate);s=workflow.run(cid)
   self.assertEqual(s['status'],'closed',s.get('human_review_routing'))
-  self.assertEqual(s['case_id'],cid);self.assertEqual(s['final']['outcome'],'charge_upheld');self.assertEqual(s['preliminary_judge']['liability'],'refund')
-  self.assertLessEqual(len(s['rounds']),3);self.assertTrue(s['rounds'][-1]['arguments']['driver']['rebuttal_claim_ids'] or len(s['rounds'])==1)
+  self.assertEqual(s['case_id'],cid);self.assertEqual(s['final']['outcome'],'refund');self.assertEqual(s['preliminary_judge']['liability'],'charge_upheld')
+  challenge_rounds=[r for r in s['rounds'] if r['stage']=='challenge'];self.assertTrue(1<=len(challenge_rounds)<=3)
+  self.assertEqual(challenge_rounds[0]['new_evidence']['driver'],[]);self.assertTrue(challenge_rounds[0]['new_evidence']['rider'])
   self.assertTrue(set(original).issubset(s['bundle']));self.assertEqual({k:s['bundle'][k] for k in original},original)
   self.assertTrue(any(c['tool_name']=='get_submitted_evidence' for c in store.audit_rows(cid,'agent_tool_calls')))
   self.assertEqual(len(store.audit_rows(cid,'submitted_artifacts')),1)
  def test_evidence_timeout_can_be_configured_to_human_review(self):
   with patch.dict(os.environ,{'EVIDENCE_REQUIRED_TIMEOUT':'human_review'}):
-   s=component_case('SIM-NS-004')
+   s=component_case('BM-NS-027')
   s['demo_clock_offset_seconds']=43210;store.save(s);out=settlement.expire(s['case_id']);self.assertEqual(out['status'],'human_review');self.assertNotIn('final',out)
   self.assertIn('REQUIRED_EVIDENCE_NOT_PROVIDED',out['human_review_routing']['active_reasons'])
  def test_free_text_and_generic_disagreement_rejected(self):
-  s=component_case('SIM-NS-004')
+  s=component_case('BM-NS-027')
   for ground in ('new_evidence','disagreement'):
-   req=ChallengeRequest(actor='driver',ground=ground,statement='I disagree with the preliminary decision and want another result.',evidence='A server record supposedly exists.')
+   req=ChallengeRequest(actor='rider',ground=ground,statement='I disagree with the preliminary decision and want another result.',evidence='A server record supposedly exists.')
    self.assertFalse(evidence_intake.challenge_gate(s,req)['admitted'])
  def test_tampered_upload_and_cross_case_are_not_verified(self):
-  s=component_case('SIM-NS-004');payload=simulation.driver_supplement();payload['trip_update']['cancellation_time']='2026-10-12T13:20:00+08:00'
-  a=evidence_intake.ingest(s,EvidenceUpload(actor='driver',filename='tampered.json',payload=payload));self.assertEqual(a['verification_status'],'UNVERIFIED')
-  req=ChallengeRequest(actor='driver',ground='new_evidence',statement='Please consider the cancellation timestamp in this uploaded document.',artifact_ids=[a['artifact_id']]);self.assertEqual(evidence_intake.challenge_gate(s,req)['route'],'human_review')
-  other=component_case('SIM-NS-004');self.assertFalse(evidence_intake.challenge_gate(other,req)['admitted'])
+  s=component_case('BM-NS-027');payload=simulation.supplements()['BM-NS-027'];payload=dict(payload,trip_update=dict(payload['trip_update'],pickup_updated_at='2026-10-13T08:44:59+08:00'))
+  a=evidence_intake.ingest(s,EvidenceUpload(actor='rider',filename='tampered.json',payload=payload));self.assertEqual(a['verification_status'],'UNVERIFIED')
+  req=ChallengeRequest(actor='rider',ground='new_evidence',statement='Please consider the pickup change time in this uploaded document.',artifact_ids=[a['artifact_id']]);self.assertEqual(evidence_intake.challenge_gate(s,req)['route'],'human_review')
+  other=component_case('BM-NS-027');self.assertFalse(evidence_intake.challenge_gate(other,req)['admitted'])
 
 class ProviderContractTests(unittest.TestCase):
  def test_responses_tool_replay_preserves_items(self):

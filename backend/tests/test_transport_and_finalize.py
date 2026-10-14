@@ -30,7 +30,7 @@ class FinalizeTests(unittest.TestCase):
         self.tmp=tempfile.TemporaryDirectory();self.old=store.DB;store.DB=Path(self.tmp.name)/'test.sqlite';store.init()
     def tearDown(self):store.DB=self.old;self.tmp.cleanup()
     def test_expiry_revalidates_semantics_not_only_valid_boolean(self):
-        s=component_case('SIM-NS-001');self.assertTrue(s['valid']);self.assertEqual(s['final_judge']['liability'],'charge_upheld')
+        s=component_case('BM-NS-001');self.assertTrue(s['valid']);self.assertEqual(s['final_judge']['liability'],'charge_upheld')
         s['final_judge']['liability']='refund';s['demo_clock_offset_seconds']=43210;store.save(s)
         result=settlement.expire(s['case_id'])
         self.assertEqual(result['status'],'human_review');self.assertNotIn('final',result)

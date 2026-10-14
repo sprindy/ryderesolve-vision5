@@ -17,9 +17,9 @@ const POSITION_TEXT={refund_requested:'Argues the charge should be reversed',cha
 function positionText(p){return POSITION_TEXT[p]||String(p||'').replaceAll('_',' ')}
 const GROUND_TEXT={new_evidence:'new evidence',factual_error:'a factual error',policy_error:'a wrong policy',disagreement:'general disagreement'};
 function groundText(g){return GROUND_TEXT[g]||String(g||'').replaceAll('_',' ')}
-const SOURCE_TEXT={trip_data:'Trip record',gps_telemetry:'GPS points',chat_logs:'Messages and calls',chat_signals:'Message analysis',app_events:'App events',navigation_routes:'Navigation routes',fare_breakdown:'Fare breakdown',rider_profile:'Rider profile',driver_profile:'Driver profile',party_history:'Account history',pairwise_history:'Past trips together',official_policy_clauses:'Policy clauses',dispute_ticket:'Dispute statement',submitted_document:'Uploaded document',party_statement:'Party statement',pricing:'Refund calculation input'};
+const SOURCE_TEXT={traffic_conditions:'Traffic incidents',trip_data:'Trip record',gps_telemetry:'GPS points',chat_logs:'Messages and calls',chat_signals:'Message analysis',app_events:'App events',navigation_routes:'Navigation routes',fare_breakdown:'Fare breakdown',rider_profile:'Rider profile',driver_profile:'Driver profile',party_history:'Account history',pairwise_history:'Past trips together',official_policy_clauses:'Policy clauses',dispute_ticket:'Dispute statement',submitted_document:'Uploaded document',party_statement:'Party statement',pricing:'Refund calculation input'};
 function sourceText(t){return SOURCE_TEXT[t]||String(t||'').replaceAll('_',' ')}
-const TOOL_TEXT={get_dispute:'Read the dispute statement',get_trip:'Looked up the trip record',get_trip_gps:'Checked the driver GPS',get_communications:'Read the messages and calls',get_chat_signals:'Analysed message tone and intent',get_app_events:'Checked app events',get_rider_profile:'Read the rider profile',get_driver_profile:'Read the driver profile',get_navigation_routes:'Compared navigation routes',get_fare_breakdown:'Checked the fare breakdown',get_party_history:'Read both parties\' history',get_pairwise_history:'Looked for past trips together',get_submitted_evidence:'Read uploaded evidence',search_policy:'Looked up the policy',search_precedents:'Searched past rulings'};
+const TOOL_TEXT={get_dispute:'Read the dispute statement',get_trip:'Looked up the trip record',get_trip_gps:'Checked the driver GPS',get_communications:'Read the messages and calls',get_chat_signals:'Analysed message tone and intent',get_app_events:'Checked app events',get_rider_profile:'Read the rider profile',get_driver_profile:'Read the driver profile',get_navigation_routes:'Compared navigation routes',get_traffic_conditions:'Checked traffic incidents',get_fare_breakdown:'Checked the fare breakdown',get_party_history:'Read both parties\' history',get_pairwise_history:'Looked for past trips together',get_submitted_evidence:'Read uploaded evidence',search_policy:'Looked up the policy',search_precedents:'Searched past rulings'};
 function toolText(t){return TOOL_TEXT[t]||String(t||'').replaceAll('_',' ')}
 const EVENT_TEXT={driver_arrived:'Driver pressed "arrived"',driver_cancelled:'Driver cancelled the booking',cancellation_fee_applied:'Cancellation fee charged',trip_started:'Trip started',trip_completed:'Trip completed',fare_charged:'Fare charged',navigation_route_selected:'Navigation route selected',pickup_updated:'Rider changed the pickup pin',booking_confirmed:'Booking confirmed',driver_assigned:'Driver assigned'};
 const LABEL_TEXT={location_update:'talks about location',contact_attempt:'tries to make contact',route_request:'asks for a route',route_explanation:'explains the route',agreement:'agrees',disagreement:'disagrees',threat:'contains a threat'};
@@ -28,6 +28,10 @@ function verifyText(v){return VERIFY_TEXT[v]||String(v||'').replaceAll('_',' ').
 
 /* Why a case cannot be decided automatically, or what is missing. */
 const CODE_TEXT={
+ ROUTE_DEVIATION_ABOVE_AI_LIMIT:['Route deviation above 2 km','Under policy v2.1 (Section 6.2) an AI may only decide route deviations up to 2 km. The agents prepared the case; a person decides.'],
+ FRAUD_FLAG_CONFIDENCE_BELOW_95:['Fraud flag on the account','Policy v2.1 (Section 6.3) requires 95% confidence for an automatic ruling when a party has a fraud flag. This case is below that.'],
+ REROUTE_NOTICE_UNCERTAIN:['Reroute notice unclear','The chat could not be read with enough confidence to tell whether the driver informed the rider of the route change.'],
+ ROUTE_FARE_CONFLICT:['Route and fare records disagree','The route shows a deviation of more than 1 km, but the fare shows no excess-distance charge.'],
  SAFETY_HIGH_IMPACT:['Possible safety issue','The messages or complaint contain a threat or other safety signal. Safety cases are always handled by a person.'],
  EVIDENCE_INTEGRITY:['Records contradict each other','The app says the driver arrived, but the driver\'s GPS was more than 50 metres from the pickup pin.'],
  MISSING_NAVIGATION_EVIDENCE:['Navigation records are missing','Without the route options the app offered at the time, we cannot tell whether the route was efficient.'],
@@ -79,7 +83,7 @@ function codeTitle(code){return CODE_TEXT[code]?.[0]||String(code||'').replaceAl
 function codeExplanation(code,fallback){return CODE_TEXT[code]?.[1]||fallback||''}
 function reasonCard(r){return `<div class="review-reason"><b>${esc(codeTitle(r.code))}</b><p>${esc(codeExplanation(r.code,r.explanation))}</p>${r.needed?`<p><b>What would resolve it:</b> ${esc(r.needed)}</p>`:''}</div>`}
 
-const STOP_TEXT={INITIAL_ASSESSMENT_COMPLETE:'First assessment finished.',NO_NEW_EVIDENCE_POLICY_CLAIM_OR_POSITION:'Stopped: the last round added no new evidence, argument or change of position.',CONFIDENT_STABLE_LIABILITY_NO_NEW_EVIDENCE:'Stopped: the outcome is stable and well supported.',CONFIDENT_CONSENSUS_ROUND_1:'Stopped after round 1: both advocates agree and confidence is high.',HARD_MAX_3_ROUNDS:'Stopped at the three-round limit.',VALIDATION_FAILED:'Stopped: an answer failed the checks.'};
+const STOP_TEXT={RESOLVED_WITH_CONFIDENCE:'Debate ended: the Judge reached a clear ruling with enough confidence.',NO_NEW_EVIDENCE_AT_ROUND_START:'Debate ended: neither advocate found new trip evidence, so this round did not take place.',HARD_MAX_3_ROUNDS:'Debate ended at the three-round limit.',VALIDATION_FAILED:'Debate ended: an answer failed the checks.'};
 function stopText(r){return STOP_TEXT[r]||'Still assessing.'}
 
 const FACTOR_TEXT={policy_clarity:['Clear policy','Is there one clear policy for this case?'],evidence_strength:['Evidence strength','Are the trip records complete and consistent?'],historical_consistency:['Consistency with past rulings','Does the outcome match comparable past cases?'],agent_agreement:['Advocate agreement','Do the two advocates end up agreeing?'],claim_reliability:['Account history','Background from both parties\' history (never decides the case).']};
@@ -114,6 +118,14 @@ function factSentence(c){
   surge_multiplier:Number(v)>1?`Surge pricing of ×${v} applied at booking.`:'No surge pricing applied.',
   promo_discount_sgd:Number(v)?`A promo discount of ${sgd(v)} was applied.`:'No promo discount was applied.',
   rider_allegation:`Rider says: "${v}"`,
+  driver_late_minutes:Number(v)>0?`The driver arrived ${m(v)} after the scheduled pickup time.`:'The driver arrived on time.',
+  contact_messages:Number(v)?`The driver sent ${plural(Number(v),'message')}.`:'The driver sent no message.',
+  contact_calls:Number(v)?`The driver made ${plural(Number(v),'call')}.`:'The driver made no call.',
+  deviation_km:Number(v)>0?`The route taken was ${Number(v).toFixed(1)} km longer than the recommended route.`:'The driver took the recommended route.',
+  rider_informed_of_reroute:v?'The driver told the rider about the reroute, with a reason, before deviating.':'The driver did not tell the rider about the reroute in time.',
+  rider_agreed_to_reroute:v?'The rider agreed to the reroute.':'There is no record of the rider agreeing to the reroute.',
+  traffic_incident_verified:v?'A traffic incident on the recommended route is on record.':'No traffic incident is on record for the recommended route.',
+  excess_distance_fare_sgd:Number(v)?`The extra distance added ${sgd(v)} to the fare.`:'No excess-distance charge was added to the fare.',
  };
  return t[c.kind]||`${String(c.kind).replaceAll('_',' ')}: ${v}`;
 }
@@ -144,6 +156,7 @@ function describeRecord(e){
  if(t==='chat_logs')return r.type==='call'?`${time(r.timestamp)} — ${ROLE_TEXT[r.sender]||r.sender} called${r.status?` (${String(r.status).replaceAll('_',' ')})`:''}.`:`${time(r.timestamp)} — ${ROLE_TEXT[r.sender]||r.sender}: "${r.content}"`;
  if(t==='chat_signals')return `${time(r.timestamp)} — ${ROLE_TEXT[r.sender]||r.sender}'s message ${(r.labels||[]).map(l=>LABEL_TEXT[l]||l).join(', ')||'is neutral small talk'}; tone: ${r.sentiment}.`;
  if(t==='app_events')return `${time(r.timestamp)} — ${EVENT_TEXT[r.event_type]||String(r.event_type).replaceAll('_',' ')}${r.details?`: ${r.details}`:''}.`;
+ if(t==='traffic_conditions')return `${time(r.timestamp)} — ${String(r.incident_type||'incident').replaceAll('_',' ')} on ${r.road||'the route'}${r.direction?' '+r.direction:''} (${r.severity||'unknown'} severity)${r.description?': '+r.description:''}`;
  if(t==='navigation_routes')return `Route option ${r.route_id}: ${r.distance_km} km, about ${r.eta_minutes} min${r.recommended?' — recommended by the app':''}.`;
  if(t==='fare_breakdown')return r.base_fare_sgd!=null?`Fare: base ${sgd(r.base_fare_sgd)} × surge ${r.surge_multiplier} + platform fee ${sgd(r.platform_fee_sgd)} − promo ${sgd(r.promo_discount_sgd)}${r.promo_code?` (${r.promo_code})`:''} = ${sgd(r.total_charged_sgd)} charged.`:`Charge recorded: ${sgd(r.total_charged_sgd)} ${String(r.charge_type||'').replaceAll('_',' ')}.`;
  if(t==='rider_profile'||t==='driver_profile'){const h=r.dispute_history||{};return `${t==='rider_profile'?'Rider':'Driver'} account: ${r.account_age_days??'unknown'} days old, ${r.total_trips??r.completed_trips??'unknown'} trips, ${h.total_disputes??r.disputes??'unknown'} past disputes.`}

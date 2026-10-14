@@ -45,7 +45,7 @@ def verify_refs(bundle,ids):
             if parent not in bundle:errors.append('MISSING_PARENT_EVIDENCE')
     return sorted(set(errors))
 
-THREATS=('i will hurt','will kill','physical threat','sexual assault','weapon','我要杀','我要打','伤害你','人身威胁')
+THREATS=('i will hurt','will kill','physical threat','sexual assault','weapon','make sure you regret','you will regret','make sure you lose','我要杀','我要打','伤害你','人身威胁')
 def safety_signals(state,bundle):
     signals=[]
     for eid,e in bundle.items():

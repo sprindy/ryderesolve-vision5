@@ -36,24 +36,36 @@ def calculate(s):
     if verify_refs(bundle,[trip_e['evidence_id']]):return block('BLOCKED_PRICING_INTEGRITY')
     t=trip_e['raw'];route=t.get('category')=='long_route'
     if route and t.get('pricing_basis')!='fixed_pickup_dropoff':return block('BLOCKED_UNSUPPORTED_PRICING_RULE')
-    rule='FIXED_FARE_EXCESS' if route else 'CANCELLATION_FEE_REVERSAL';version='demo-1'
     bound=[json.loads(p['data_json']) for ref in s['applicable_policy_refs'] for p in store.query('SELECT data_json FROM policy_versions WHERE policy_ref=?',(ref,))]
-    if not bound or not any(p.get('refund_rule_id')==rule for p in bound):return block('BLOCKED_RULE_POLICY_MISMATCH')
-    fields=('charged_fare_sgd','quoted_fare_sgd') if route else ('cancellation_fee',)
-    if any(k not in t for k in fields):return block('BLOCKED_MISSING_PRICING')
-    inputs={k:cents(t[k]) for k in fields}
+    rules={p.get('refund_rule_id') for p in bound}
+    rule='V21_EXCESS_DISTANCE' if route and 'V21_EXCESS_DISTANCE' in rules else 'FIXED_FARE_EXCESS' if route else 'CANCELLATION_FEE_REVERSAL';version='demo-1'
+    if rule not in rules:return block('BLOCKED_RULE_POLICY_MISMATCH')
+    parents=[trip_e['evidence_id']]
+    if rule=='V21_EXCESS_DISTANCE':
+        fares=[e for e in bundle.values() if e['source_table']=='fare_breakdown' and e.get('verification_status')=='VERIFIED']
+        if fares and 'excess_distance_fare' in fares[0]['raw']:
+            inputs={'excess_distance_fare':cents(fares[0]['raw']['excess_distance_fare'])};parents.append(fares[0]['evidence_id'])
+        elif liability=='refund':return block('BLOCKED_MISSING_PRICING')
+        else:inputs={}  # no refund is due, so no pricing input is needed
+    else:
+        fields=('charged_fare_sgd','quoted_fare_sgd') if route else ('cancellation_fee',)
+        if any(k not in t for k in fields):return block('BLOCKED_MISSING_PRICING')
+        inputs={k:cents(t[k]) for k in fields}
     if any(v<0 for v in inputs.values()):return block('BLOCKED_NEGATIVE_PRICING')
-    amount=(max(0,inputs['charged_fare_sgd']-inputs['quoted_fare_sgd']) if route else inputs['cancellation_fee']) if liability=='refund' else 0
+    if liability!='refund':amount=0
+    elif rule=='V21_EXCESS_DISTANCE':amount=inputs['excess_distance_fare']
+    elif route:amount=max(0,inputs['charged_fare_sgd']-inputs['quoted_fare_sgd'])
+    else:amount=inputs['cancellation_fee']
     if route and liability=='refund' and amount==0:return block('BLOCKED_UNDEFINED_ROUTE_REMEDY')
-    raw=dict(currency='SGD',input_cents=inputs,rule_id=rule,rule_version=version,provenance={'kind':'derived','parent_evidence_ids':[trip_e['evidence_id']],'source_system':'demo-pricing-adapter'},observed_at=trip_e.get('observed_at','UNKNOWN'))
+    raw=dict(currency='SGD',input_cents=inputs,rule_id=rule,rule_version=version,provenance={'kind':'derived','parent_evidence_ids':parents,'source_system':'demo-pricing-adapter'},observed_at=trip_e.get('observed_at','UNKNOWN'))
     ev=store.evidence(s['case_id'],'pricing','derived:'+trip_e['evidence_id'],raw);bundle[ev['evidence_id']]=ev
     key=f"{s['case_id']}:decision-1:{rule}@{version}"
     return dict(status='CALCULATED_NOT_EXECUTED',amount_cents=amount,amount_sgd=amount/100,currency='SGD',refund_rule_id=rule,refund_rule_version=version,
-        input_evidence_ids=[ev['evidence_id'],trip_e['evidence_id']],policy_refs=s['applicable_policy_refs'],input_cents=inputs,resolution_authority='HUMAN_REVIEWER' if s.get('human_review_result') else 'VALIDATED_JUDGE',
-        formula='max(0, charged_cents - fixed_quote_cents)' if route else 'verified_cancellation_fee_cents if validated liability is refund, else 0',
+        input_evidence_ids=[ev['evidence_id'],*parents],policy_refs=s['applicable_policy_refs'],input_cents=inputs,resolution_authority='HUMAN_REVIEWER' if s.get('human_review_result') else 'VALIDATED_JUDGE',
+        formula={'V21_EXCESS_DISTANCE':'verified excess_distance_fare_cents (v2.1 1.3; tolls are passed through at cost and not refunded)','FIXED_FARE_EXCESS':'max(0, charged_cents - fixed_quote_cents)'}.get(rule,'verified_cancellation_fee_cents if validated liability is refund, else 0'),
         calculation_trace=[{'step':'read_verified_pricing','values':inputs},{'step':'apply_validated_liability','value':liability},{'step':'apply_demo_rule','rule':rule+'@'+version,'result_cents':amount}],
         idempotency_key=key,result_id='REF-'+hashlib.sha256(key.encode()).hexdigest()[:16],external_payment_executed=False,
-        note='Mock reversal. Fixed-fare excess rule applies only to this explicit demo quote; not a general Ryde surge/promo remedy.')
+        note='Mock reversal: no money is moved in this demo.')
 
 def to_human(s,codes,reasons=None):
     known={r['code']:r for r in reasons or []}

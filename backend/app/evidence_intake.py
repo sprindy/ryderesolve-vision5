@@ -25,16 +25,17 @@ def ingest(case,request):
 def get(cid,ident):
     return next((r for r in store.audit_rows(cid,'submitted_artifacts') if r['artifact_id']==ident),None)
 
-def read_records(state):
-    """Return immutable upload plus canonical derived records, keeping originals intact."""
+def read_records(state,actor=None):
+    """Return immutable upload plus canonical derived records, keeping originals intact.
+    An advocate (actor) only reads documents and statements submitted by its own party."""
     result=[]
     challenge=state.get('challenge_request')
-    if challenge:
+    if challenge and actor in (None,challenge['actor']):
         result.append(('party_statement',state['case_id']+':challenge:'+challenge['actor'],dict(actor=challenge['actor'],ground=challenge.get('ground'),statement=challenge['statement'],
             provenance={'kind':'user_submission','source_system':'authenticated-party-challenge'},verification_status='UNVERIFIED')))
     for ident in state.get('admitted_artifact_ids',[]):
         row=get(state['case_id'],ident)
-        if not row: continue
+        if not row or (actor and row['actor']!=actor): continue
         raw=dict(artifact_id=ident,payload=row['payload'],payload_hash=row['payload_hash'],verification_status=row['verification_status'],verification=row['verification'],
             provenance={'kind':row['verification']['source_kind'],'actor':row['actor'],'filename':row['filename']})
         result.append(('submitted_document',ident,raw))

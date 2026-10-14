@@ -1,0 +1,70 @@
+{
+ "BM-NS-027": {
+  "app_events": [
+   {
+    "details": "Rider moved the pickup pin; server confirmed.",
+    "event_type": "pickup_updated",
+    "timestamp": "2026-10-13T08:39:00+08:00"
+   },
+   {
+    "details": "Driver arrived at the original pin.",
+    "event_type": "driver_arrived",
+    "timestamp": "2026-10-13T08:43:00+08:00"
+   },
+   {
+    "details": "$5.00 cancellation fee charged.",
+    "event_type": "cancellation_fee_applied",
+    "timestamp": "2026-10-13T08:52:00+08:00"
+   }
+  ],
+  "artifact_id": "BM-RIDER-PICKUP-027",
+  "gps_telemetry": [],
+  "party": "rider",
+  "source_system": "simulated_trip_server",
+  "timing_explanation": "Server receipt of the in-app pickup change made at 08:39, before the driver arrived.",
+  "trip_id": "BM-NS-027",
+  "trip_update": {
+   "pickup_location": {
+    "lat": 1.31905,
+    "lng": 103.8899,
+    "name": "Paya Lebar Quarter (updated pin)"
+   },
+   "pickup_update_status": "SERVER_CORROBORATED",
+   "pickup_updated_at": "2026-10-13T08:39:00+08:00"
+  }
+ },
+ "BM-NS-031": {
+  "app_events": [
+   {
+    "details": "Rider moved the pickup pin; server confirmed.",
+    "event_type": "pickup_updated",
+    "timestamp": "2026-10-13T08:39:00+08:00"
+   },
+   {
+    "details": "Driver arrived at the original pin.",
+    "event_type": "driver_arrived",
+    "timestamp": "2026-10-13T08:43:00+08:00"
+   },
+   {
+    "details": "$5.00 cancellation fee charged.",
+    "event_type": "cancellation_fee_applied",
+    "timestamp": "2026-10-13T08:52:00+08:00"
+   }
+  ],
+  "artifact_id": "BM-RIDER-PICKUP-031",
+  "gps_telemetry": [],
+  "party": "rider",
+  "source_system": "simulated_trip_server",
+  "timing_explanation": "Server receipt of the in-app pickup change made at 08:39, before the driver arrived.",
+  "trip_id": "BM-NS-031",
+  "trip_update": {
+   "pickup_location": {
+    "lat": 1.28565,
+    "lng": 103.8607,
+    "name": "Marina Bay Sands (updated pin)"
+   },
+   "pickup_update_status": "SERVER_CORROBORATED",
+   "pickup_updated_at": "2026-10-13T08:39:00+08:00"
+  }
+ }
+}

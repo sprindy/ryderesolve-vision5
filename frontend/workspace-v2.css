@@ -25,3 +25,8 @@
 .precedent-row p{margin:4px 0}
 .refund-amount{font-size:22px;display:block;margin:4px 0 8px}
 .case-table tr.sub-row td{border-top:0;padding-top:0;color:#6b7684}
+
+.new-evidence{display:grid;grid-template-columns:1fr 1fr;gap:16px;font-size:12px;margin:6px 0 12px}
+.round-skipped{border-style:dashed;opacity:.85}
+.stage-title{margin:26px 0 10px}
+@media (max-width:700px){.new-evidence{grid-template-columns:1fr}}
