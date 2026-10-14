@@ -13,6 +13,14 @@ venv/
 *.egg-info/
 dist/
 build/
+backend/.env
+
+# Database
+*.db
+*.sqlite3
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
 
 # Node
 node_modules/
