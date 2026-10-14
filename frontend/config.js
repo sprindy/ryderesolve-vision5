@@ -1,6 +1,6 @@
 // Pages work with backend routes or a separate local static server on 5173.
 // On GitHub Pages the backend is hosted separately; set BACKEND_URL below.
-const BACKEND_URL = 'https://ryderesolve-vision5.onrender.com';
+const BACKEND_URL = 'https://euculc-etsxek-8080.app.cloudstudio.work';
 
 window.RYDE_CONFIG = {
   apiBase: window.location.port === '5173'

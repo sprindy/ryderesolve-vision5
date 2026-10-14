@@ -45,7 +45,7 @@ async def lifespan(app):
     except asyncio.CancelledError: pass
 
 app=FastAPI(title='RydeResolve · LangGraph Final Demo',lifespan=lifespan)
-app.add_middleware(CORSMiddleware,allow_origins=['http://127.0.0.1:5173','http://localhost:5173','https://sprindy.github.io','https://ryderesolve-vision5.onrender.com'],allow_methods=['GET','POST'],allow_headers=['Content-Type','X-Admin-Token','Authorization'])
+app.add_middleware(CORSMiddleware,allow_origins=['http://127.0.0.1:5173','http://localhost:5173','https://sprindy.github.io','https://ryderesolve-vision5.onrender.com','https://euculc-etsxek-8080.app.cloudstudio.work'],allow_methods=['GET','POST'],allow_headers=['Content-Type','X-Admin-Token','Authorization'])
 @app.middleware('http')
 async def demo_identity(request,call_next):
     path=request.url.path
